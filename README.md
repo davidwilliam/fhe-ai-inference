@@ -117,6 +117,36 @@ pip install pytest
 pip install -e ~/workspace_cpp/openfhe-python
 ```
 
+#### 4.1 Install the Python Bindings
+
+To use the OpenFHE Python bindings in development mode:
+
+```bash
+# 4.1 Install the OpenFHE‑Python wrapper in editable mode
+pip install -e ~/workspace_cpp/openfhe-python
+```
+
+> This will link the local C++ bindings into your Python environment for live development.
+
+
+#### 4.2 (macOS Only) Patch Library RPATH
+
+If you're on **macOS** and encounter errors like:
+
+```
+ImportError: dlopen(...openfhe.so): Library not loaded: @rpath/libOPENFHEpke.1.dylib
+```
+
+...it means the dynamic linker can't locate the required `.dylib` files (even if `DYLD_LIBRARY_PATH` is set). To fix this, patch the shared object to include `/usr/local/lib`:
+
+```bash
+install_name_tool -add_rpath /usr/local/lib ~/workspace_cpp/openfhe-python/openfhe/openfhe.so
+```
+
+This embeds the correct library path directly into the binary so that it works consistently—even inside tools like `hatch`, `pdoc`, or test runners.
+
+> You only need to run this after a fresh build of `openfhe-python`, or if you see that import error again.
+
 ### 5. Verify Dynamic Linking
 
 macOS’s dynamic loader must find the OpenFHE `.dylib` in `/usr/local/lib`. Either:

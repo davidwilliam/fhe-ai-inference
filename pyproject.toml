@@ -19,7 +19,8 @@ default = [
     "black>=24.0.0",
     "ruff>=0.0.285",
     "jupyter>=1.0.0",
-    "pre-commit>=3.5.0"
+    "pre-commit>=3.5.0",
+    "hatchling"
 ]
 
 [project.urls]
@@ -50,12 +51,7 @@ test = "pytest --cov=fhe_ai_inference --cov-report=html"
 format = "black ."
 lint = "ruff ."
 docs = "pdoc fhe_ai_inference --output-dir docs"
-dev = [
-  "hatch run lint",
-  "hatch run format",
-  "hatch run test",
-  "hatch run docs"
-]
+dev = "hatch run lint && hatch run format && hatch run test && hatch run docs"
 
 [tool.ruff]
 line-length = 88
