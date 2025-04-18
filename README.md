@@ -43,9 +43,109 @@ FHE-AI-Inference aims to fill a unique niche by combining OpenFHE’s CKKS schem
 
 ## Getting Started
 
-The project is not yet installable as a package, but you can set up the development environment to contribute:
+The project is not yet installable as a package, but you can set up the development environment to contribute. 
 
-1. **Clone the Repository**:
+**Clone the Repository**:
    ```bash
    git clone https://github.com/<your-username>/fhe-ai-inference.git
    cd fhe-ai-inference
+   ```
+
+## Installation & Configuration
+
+*Tested on macOS (MacBook Pro M3); similar steps apply to most Linux/Unix systems.*
+
+### 1. Prerequisites
+
+- **Homebrew** (macOS):  
+  ```bash
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  ```
+- **Command‐line tools**:  
+  ```bash
+  brew install cmake libomp pybind11
+  ```
+- **Python 3.13+**  
+- **Git**
+
+### 2. Clone & Build the OpenFHE C++ Core
+
+```bash
+cd ~/workspace_cpp
+
+# 2.1 Clone the OpenFHE repo
+git clone https://github.com/openfheorg/openfhe-development.git openfhe
+cd openfhe
+
+# 2.2 Create build directory & configure
+mkdir build && cd build
+cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_SHARED=ON \
+  -DBUILD_UNITTESTS=OFF \
+  -DBUILD_EXAMPLES=OFF \
+  -DBUILD_BENCHMARKS=OFF \
+  -DCMAKE_INSTALL_PREFIX=/usr/local
+
+# 2.3 Compile & install
+make -j$(sysctl -n hw.ncpu)
+sudo make install
+```
+
+> **What this does:**  
+> - Installs shared libs (e.g. `/usr/local/lib/libOPENFHEpke.1.dylib`)  
+> - Skips unit tests, examples, and benchmarks to avoid C++ `<regex>` issues
+
+### 3. Prepare Your FHE‑AI‑Inference Environment
+
+```bash
+cd /path/to/fhe-ai-inference
+
+# 3.1 Create & activate a Python venv
+python3 -m venv venv
+source venv/bin/activate
+
+# 3.2 Upgrade pip & install test tools
+pip install --upgrade pip
+pip install pytest
+```
+
+### 4. Install the Python Bindings
+
+```bash
+# 4.1 Install the OpenFHE‑Python wrapper in editable mode
+pip install -e ~/workspace_cpp/openfhe-python
+```
+
+### 5. Verify Dynamic Linking
+
+macOS’s dynamic loader must find the OpenFHE `.dylib` in `/usr/local/lib`. Either:
+
+- **Temporary (shell) fix**  
+  ```bash
+  export DYLD_LIBRARY_PATH="/usr/local/lib:${DYLD_LIBRARY_PATH:-}"
+  ```
+- **Permanent (bake into the .so)**  
+  ```bash
+  SOFILE=$(python - <<EOF
+  import openfhe, os
+  print(os.path.join(os.path.dirname(openfhe.__file__), "openfhe.so"))
+  EOF
+  )
+  install_name_tool -add_rpath /usr/local/lib "$SOFILE"
+  ```
+
+### 6. Run the Tests
+
+```bash
+cd /path/to/fhe-ai-inference
+pytest tests/
+```
+
+You should see all tests passing. At this point, your environment is fully configured for development on macOS. For Linux/Unix, replace Homebrew installs with your distro’s package manager (e.g. `apt install cmake libomp-dev pybind11-dev`), and adjust `DYLD_LIBRARY_PATH` → `LD_LIBRARY_PATH` as needed.
+
+# Maintainer
+
+[David William Silva](https://github.com/davidwilliam)
+
+If you have any questions or comments, feel free to reach out to me at contact@davidwsilva.com.

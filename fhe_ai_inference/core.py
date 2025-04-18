@@ -1,3 +1,4 @@
+# fhe_ai_inference/core.py
 class FHEInference:
     """A class for secure neural network inference using FHE."""
     

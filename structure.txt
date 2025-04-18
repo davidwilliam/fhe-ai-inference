@@ -1,0 +1,21 @@
+.
+├── CONTRIBUTING.md
+├── LICENSE
+├── README.md
+├── docs
+├── examples
+├── fhe_ai_inference
+│   ├── __init__.py
+│   ├── core.py
+│   ├── fhe.py
+│   ├── model.py
+│   └── utils.py
+├── pyproject.toml
+├── structure.txt
+└── tests
+    ├── __init__.py
+    ├── test_core.py
+    ├── test_fhe.py
+    └── test_model.py
+
+5 directories, 14 files
