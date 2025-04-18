@@ -1,5 +1,4 @@
 # tests/test_fhe.py
-import pytest
 import fhe_ai_inference.fhe as fhe_mod
 from fhe_ai_inference.fhe import setup_ckks_context
 
@@ -44,7 +43,9 @@ def test_setup_ckks_context_custom(monkeypatch):
 
     custom_degree = 16384
     custom_level = 192
-    cc = setup_ckks_context(poly_modulus_degree=custom_degree, security_level=custom_level)
+    cc = setup_ckks_context(
+        poly_modulus_degree=custom_degree, security_level=custom_level
+    )
 
     assert calls['scheme'] == 'CKKS'
     assert calls['degree'] == custom_degree

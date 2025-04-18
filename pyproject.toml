@@ -46,16 +46,8 @@ format = "black ."
 lint = "ruff ."
 
 [tool.ruff]
-# Use Black’s default line length
 line-length = 88
-target-version = ["py38"]
+target-version = "py38"
 
-# Let Black handle these
-exclude = []
-ignore = [
-  "E203", # whitespace before ':'
-  "W503"  # line break before binary operator
-]
-
-# Select core rules plus complexity checks
+[tool.ruff.lint]
 select = ["F", "E", "W", "C90", "RUF100"]
