@@ -174,6 +174,8 @@ Or if you're using just pip:
 pip install -e ".[default]"  # if not already installed
 ```
 
+We use pre-commit hooks.
+
 ### Persisting Your Shell Configuration
 
 To ensure your venv auto‑activates and the OpenFHE libraries remain discoverable every time you open a terminal, append the following to your `~/.zshrc`:
