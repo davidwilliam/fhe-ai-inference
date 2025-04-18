@@ -3,13 +3,22 @@ name = "fhe-ai-inference"
 version = "0.1.0"
 description = "A Python library for secure neural network inference using Fully Homomorphic Encryption with OpenFHE"
 readme = "README.md"
-authors = [{ name = "David William Silva", email = "contact@davidwsilva.com" }]
+authors = [ { name = "David William Silva", email = "contact@davidwsilva.com" } ]
 license = { text = "MIT" }
 requires-python = ">=3.8"
 dependencies = [
     "openfhe>=0.8.9",
     "torch>=2.0.0",
     "numpy>=1.23.0",
+]
+
+[project.optional-dependencies]
+default = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=24.0.0",
+    "ruff>=0.0.285",
+    "jupyter>=1.0.0"
 ]
 
 [project.urls]
@@ -27,11 +36,26 @@ dependencies = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
     "black>=24.0.0",
-    "flake8>=6.0.0",
+    "ruff>=0.0.285",
     "jupyter>=1.0.0",
 ]
 
 [tool.hatch.envs.default.scripts]
 test = "pytest --cov=fhe_ai_inference --cov-report=html"
 format = "black ."
-lint = "flake8 fhe_ai_inference tests"
+lint = "ruff ."
+
+[tool.ruff]
+# Use Black’s default line length
+line-length = 88
+target-version = ["py38"]
+
+# Let Black handle these
+exclude = []
+ignore = [
+  "E203", # whitespace before ':'
+  "W503"  # line break before binary operator
+]
+
+# Select core rules plus complexity checks
+select = ["F", "E", "W", "C90", "RUF100"]

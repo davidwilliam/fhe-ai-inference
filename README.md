@@ -144,6 +144,36 @@ pytest tests/
 
 You should see all tests passing. At this point, your environment is fully configured for development on macOS. For Linux/Unix, replace Homebrew installs with your distro’s package manager (e.g. `apt install cmake libomp-dev pybind11-dev`), and adjust `DYLD_LIBRARY_PATH` → `LD_LIBRARY_PATH` as needed.
 
+### 7. Linting & Code Style (Ruff)
+
+To ensure code consistency, this project uses [**Ruff**](https://docs.astral.sh/ruff/) for linting and formatting alignment. It's extremely fast and designed to complement tools like `black`.
+
+Once installed, you can run:
+
+```bash
+ruff .
+```
+
+To automatically fix issues:
+
+```bash
+ruff . --fix
+```
+
+> Ruff is already configured in `pyproject.toml` and included as part of the `[default]` extras.
+
+You can also run Ruff through Hatch:
+
+```bash
+hatch run lint
+```
+
+Or if you're using just pip:
+
+```bash
+pip install -e ".[default]"  # if not already installed
+```
+
 ### Persisting Your Shell Configuration
 
 To ensure your venv auto‑activates and the OpenFHE libraries remain discoverable every time you open a terminal, append the following to your `~/.zshrc`:
