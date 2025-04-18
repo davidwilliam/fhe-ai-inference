@@ -174,7 +174,32 @@ Or if you're using just pip:
 pip install -e ".[default]"  # if not already installed
 ```
 
-We use pre-commit hooks.
+## Code Style & Pre-commit Hooks
+
+This project enforces code style and formatting using **[Black](https://github.com/psf/black)** and **[Ruff](https://github.com/astral-sh/ruff)** via [pre-commit hooks](https://pre-commit.com/).
+
+### Setup
+
+1. Install `pre-commit` (if not already):
+   ```bash
+   pip install pre-commit
+   ```
+
+2. Install the hooks:
+   ```bash
+   pre-commit install
+   ```
+
+3. (Optional) Run on all files manually:
+   ```bash
+   pre-commit run --all-files
+   ```
+
+From now on, every `git commit` will automatically:
+- **Lint your Python code with Ruff**
+- **Format it with Black (and refuse commit if changes are needed)**
+
+This ensures all code in the repo adheres to consistent style and quality rules.
 
 ### Persisting Your Shell Configuration
 
