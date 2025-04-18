@@ -144,6 +144,42 @@ pytest tests/
 
 You should see all tests passing. At this point, your environment is fully configured for development on macOS. For Linux/Unix, replace Homebrew installs with your distro’s package manager (e.g. `apt install cmake libomp-dev pybind11-dev`), and adjust `DYLD_LIBRARY_PATH` → `LD_LIBRARY_PATH` as needed.
 
+### Persisting Your Shell Configuration
+
+To ensure your venv auto‑activates and the OpenFHE libraries remain discoverable every time you open a terminal, append the following to your `~/.zshrc`:
+
+```bash
+# ──────────────────────────────────────────────────────────────────────────────
+# FHE‑AI‑Inference: dynamic library path
+export DYLD_LIBRARY_PATH="/usr/local/lib:${DYLD_LIBRARY_PATH:-}"
+
+# Auto‑activate the Python venv when entering the project directory
+autoload -U add-zsh-hook
+
+function .fhe_venv_auto_activate() {
+  if [[ -f "venv/bin/activate" && $(pwd) == *"/fhe-ai-inference"* ]]; then
+    # only if not already active
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+      source venv/bin/activate
+    fi
+  fi
+}
+
+add-zsh-hook chpwd .fhe_venv_auto_activate
+# also run it on shell startup if you're already in the project
+.fhe_venv_auto_activate
+# ──────────────────────────────────────────────────────────────────────────────
+```
+
+- **`DYLD_LIBRARY_PATH`** ensures macOS will always find the OpenFHE `.dylib` files in `/usr/local/lib`.  
+- The **`chpwd` hook** makes Zsh automatically `source venv/bin/activate` whenever you `cd` into your `fhe-ai-inference` directory.  
+
+After saving, reload your shell:
+
+```bash
+source ~/.zshrc
+```
+
 # Maintainer
 
 [David William Silva](https://github.com/davidwilliam)
