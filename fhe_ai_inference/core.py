@@ -10,6 +10,6 @@ class FHEInference:
             model: Pre-trained neural network model (e.g., PyTorch model).
             backend: FHE backend (default: 'openfhe').
         """
-        self.model =model
+        self.model = model
         self.backend = backend
         self.context = None

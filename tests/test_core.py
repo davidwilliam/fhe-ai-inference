@@ -1,6 +1,7 @@
 # tests/test_core.py
 from fhe_ai_inference.core import FHEInference
 
+
 def test_fhe_inference_init():
     """Test initialization of FHEInference class."""
     fhe_inf = FHEInference(model=None, backend="openfhe")
