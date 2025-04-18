@@ -39,12 +39,23 @@ dependencies = [
     "black>=24.0.0",
     "ruff>=0.0.285",
     "jupyter>=1.0.0",
+    "pdoc>=14.0.0"
 ]
+
+[tool.hatch.envs.default.env-vars]
+DYLD_LIBRARY_PATH = "/usr/local/lib"
 
 [tool.hatch.envs.default.scripts]
 test = "pytest --cov=fhe_ai_inference --cov-report=html"
 format = "black ."
 lint = "ruff ."
+docs = "pdoc fhe_ai_inference --output-dir docs"
+dev = [
+  "hatch run lint",
+  "hatch run format",
+  "hatch run test",
+  "hatch run docs"
+]
 
 [tool.ruff]
 line-length = 88

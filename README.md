@@ -201,6 +201,43 @@ From now on, every `git commit` will automatically:
 
 This ensures all code in the repo adheres to consistent style and quality rules.
 
+## Auto-Generated Documentation
+
+We use [**pdoc**](https://pdoc.dev/) to automatically generate clean, readable HTML documentation for all modules under `fhe_ai_inference/`.
+
+### Generate Docs
+
+To generate the docs:
+
+```bash
+pdoc fhe_ai_inference --output-dir docs
+```
+
+If you’re using Hatch (and OpenFHE is properly installed in your `venv`):
+
+```bash
+hatch run docs
+```
+
+This will create a `docs/` directory with HTML files like:
+- `docs/fhe_ai_inference.html`
+- `docs/index.html`
+- `docs/search.js`
+
+> ⚠️ Note: Due to OpenFHE's dynamic linking with `.dylib` files, make sure the following environment variable is set **before** generating docs:
+
+```bash
+export DYLD_LIBRARY_PATH="/usr/local/lib"
+```
+
+To preview locally:
+
+```bash
+python3 -m http.server --directory docs
+```
+
+Then open [http://localhost:8000](http://localhost:8000) in your browser.
+
 ### Persisting Your Shell Configuration
 
 To ensure your venv auto‑activates and the OpenFHE libraries remain discoverable every time you open a terminal, append the following to your `~/.zshrc`:
