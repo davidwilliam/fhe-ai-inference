@@ -20,7 +20,7 @@ The project is in the **initial setup phase**:
 - Planning the Python library structure and MVP (secure inference for a 2-layer PyTorch network).
 - No code or releases yet—stay tuned for updates!
 
-We’re actively working on the first milestone (see [Roadmap](#roadmap)) and welcome contributors to join us in building this exciting tool.
+We’re actively working on the first milestone (see [Roadmap](ROADMAP.md)) and welcome contributors to join us in building this exciting tool.
 
 ## Comparison with Other FHE Libraries
 
