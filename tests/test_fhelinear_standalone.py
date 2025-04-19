@@ -13,7 +13,7 @@ def test_fhelinear_forward():
     layer = FHELinear(weights, bias, ckks)
     outputs = layer.forward(ctxt)
 
-    results = [ckks.decrypt(ct) for ct in outputs]
+    results = outputs  # Use outputs directly, as they are already decrypted
 
     expected = [
         [1.0, 1.0, 1.0],  # Only first element

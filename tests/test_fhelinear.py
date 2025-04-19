@@ -16,7 +16,8 @@ def test_fhe_linear_layer_minimal():
     layer = FHELinear(w, b, ckks)
     outputs = layer(ctxt_x)
 
-    decrypted = [ckks.decrypt(c)[0] for c in outputs]  # Take only first slot of each
+    # outputs is already a list of decrypted value lists; take the first slot of each
+    decrypted = [output[0] for output in outputs]
 
     # Validate results
     expected = (torch.tensor(w) @ x + torch.tensor(b)).tolist()

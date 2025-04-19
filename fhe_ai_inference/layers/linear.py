@@ -1,5 +1,5 @@
-# fhe_ai_inference/layers/linear.py
 from fhe_ai_inference.openfhe_ckks import CKKSOperations
+from decimal import Decimal, ROUND_HALF_UP
 
 
 class FHELinear:
@@ -17,6 +17,14 @@ class FHELinear:
     def __call__(self, encrypted_input):
         return self.forward(encrypted_input)
 
+    def round_value(self, value, decimals=2):
+        """Rounds the decrypted value to a specific decimal place."""
+        return float(
+            Decimal(value).quantize(
+                Decimal(f"1.{'0'*decimals}"), rounding=ROUND_HALF_UP
+            )
+        )
+
     def forward(self, encrypted_input):
         outputs = []
         num_out = len(self.weights)
@@ -32,6 +40,7 @@ class FHELinear:
             if self.bias:
                 acc = self.ckks.eval_add(acc, [self.bias[i]] * self.slot_len)
 
-            outputs.append(acc)
+            # Round the result before returning
+            outputs.append([self.round_value(val) for val in self.ckks.decrypt(acc)])
 
         return outputs
