@@ -9,8 +9,8 @@ def encrypt_tensor(tensor, context, encrypt_fn, public_key):
 
 
 def decrypt_tensor(ciphertext, context, decrypt_fn, private_key, original_len=None):
-    decrypted = decrypt_fn(private_key, ciphertext)  # returns Plaintext
-    decoded = decrypted.GetRealPackedValue()  # full 8192 values
+    decrypted = decrypt_fn(private_key, ciphertext)
+    decoded = decrypted.GetRealPackedValue()
     if original_len is not None:
-        decoded = decoded[:original_len]  # slice to input size
+        decoded = decoded[:original_len]
     return torch.tensor(decoded)

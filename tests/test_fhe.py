@@ -1,4 +1,3 @@
-# tests/test_fhe.py
 import fhe_ai_inference.fhe as fhe_mod
 from fhe_ai_inference.fhe import setup_ckks_context
 
@@ -17,10 +16,8 @@ def test_setup_ckks_context_default(monkeypatch):
 
         return FakeContext()
 
-    # Patch or add GenCryptoContext on the module
     monkeypatch.setattr(fhe_mod, "GenCryptoContext", fake_genctx, raising=False)
 
-    # Invoke with defaults
     cc = setup_ckks_context()
 
     assert calls["scheme"] == "CKKS"

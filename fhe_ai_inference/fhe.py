@@ -1,4 +1,3 @@
-# fhe_ai_inference/fhe.py
 from openfhe import GenCryptoContext
 
 

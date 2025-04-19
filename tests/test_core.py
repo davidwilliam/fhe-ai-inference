@@ -1,4 +1,3 @@
-# tests/test_core.py
 from fhe_ai_inference.core import FHEInference
 
 
