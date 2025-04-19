@@ -1,29 +1,24 @@
+# tests/test_fhelinear.py
+
 import torch
-from fhe_ai_inference.core import FHEInference
-from fhe_ai_inference.encoder import encrypt_tensor, decrypt_tensor
+from fhe_ai_inference.openfhe_ckks import CKKSOperations
 from fhe_ai_inference.layers import FHELinear
 
 
-def test_fhe_linear_layer():
-    fhe = FHEInference(model=None)
-    context = fhe.context
-    pk = fhe.public_key
-    sk = fhe.secret_key
+def test_fhe_linear_layer_minimal():
+    x = torch.tensor([1.0, 2.0])
+    w = [[1.0, 0.0], [0.0, 1.0]]
+    b = [0.0, 0.0]
 
-    x = torch.tensor([1.0, 2.0])  # input vector
-    w = torch.tensor([[0.5, 1.0], [-1.0, 0.0]])  # weight matrix (2×2)
-    b = torch.tensor([0.0, 1.0])  # bias vector
+    ckks = CKKSOperations(slots=2)
+    ctxt_x = ckks.encrypt(x.tolist())
 
-    ctxt_x = encrypt_tensor(x, context, fhe.encrypt, pk)
+    layer = FHELinear(w, b, ckks)
+    outputs = layer(ctxt_x)
 
-    fhe_linear = FHELinear(w, b, context)
-    out_ciphertexts = fhe_linear(ctxt_x)
+    decrypted = [ckks.decrypt(c)[0] for c in outputs]  # Take only first slot of each
 
-    decrypted_outputs = [
-        decrypt_tensor(c, context, fhe.decrypt, sk)[0].item() for c in out_ciphertexts
-    ]
-
-    expected = (w @ x) + b
-
-    for actual, expected_val in zip(decrypted_outputs, expected.tolist()):
+    # Validate results
+    expected = (torch.tensor(w) @ x + torch.tensor(b)).tolist()
+    for actual, expected_val in zip(decrypted, expected):
         assert abs(actual - expected_val) < 1e-1

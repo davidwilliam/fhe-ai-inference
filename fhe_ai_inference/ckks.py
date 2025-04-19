@@ -6,7 +6,7 @@ from openfhe.openfhe import (
 )
 
 
-def setup_ckks_context(poly_modulus_degree=16384, scaling_modulus_size=45):
+def setup_ckks_context(poly_modulus_degree=16384, scaling_modulus_size=45, slots=3):
     params = CCParamsCKKSRNS()
     params.SetMultiplicativeDepth(3)
     params.SetSecurityLevel(SecurityLevel.HEStd_128_classic)
@@ -21,6 +21,9 @@ def setup_ckks_context(poly_modulus_degree=16384, scaling_modulus_size=45):
     keypair = context.KeyGen()
     context.EvalSumKeyGen(keypair.secretKey)
     context.EvalMultKeyGen(keypair.secretKey)
-    context.EvalAtIndexKeyGen(keypair.secretKey, [1, -1])
+
+    powers = [2**i for i in range(slots.bit_length()) if 2**i < slots]
+    indexes = powers + [-i for i in powers]
+    context.EvalAtIndexKeyGen(keypair.secretKey, indexes)
 
     return context, keypair

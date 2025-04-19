@@ -40,8 +40,7 @@ class CKKSOperations:
         self._generate_rotation_keys(slots)
 
     def _generate_rotation_keys(self, slots):
-        powers = [2**i for i in range(slots.bit_length()) if 2**i < slots]
-        indexes = powers + [-i for i in powers]
+        indexes = [0] + list(range(1, slots)) + list(range(-1, -slots, -1))
         self.context.EvalAtIndexKeyGen(self.keypair.secretKey, indexes)
 
     def encode(self, values):
@@ -75,13 +74,17 @@ class CKKSOperations:
             for c in values
         ]
 
-    def eval_add(self, ciphertext, pt_values):
-        pt = self.encode(pt_values)
-        return self.context.EvalAdd(ciphertext, pt)
+    def eval_add(self, ctxt_or_plain, pt_or_ctxt):
+        if isinstance(pt_or_ctxt, list):
+            pt = self.encode(pt_or_ctxt)
+            return self.context.EvalAdd(ctxt_or_plain, pt)
+        return self.context.EvalAdd(ctxt_or_plain, pt_or_ctxt)
 
-    def eval_mult(self, ciphertext, pt_values):
-        pt = self.encode(pt_values)
-        return self.context.EvalMult(ciphertext, pt)
+    def eval_mult(self, ctxt_or_plain, pt_or_ctxt):
+        if isinstance(pt_or_ctxt, list):
+            pt = self.encode(pt_or_ctxt)
+            return self.context.EvalMult(ctxt_or_plain, pt)
+        return self.context.EvalMult(ctxt_or_plain, pt_or_ctxt)
 
     def eval_rotate(self, ciphertext, steps):
         return self.context.EvalRotate(ciphertext, steps)
