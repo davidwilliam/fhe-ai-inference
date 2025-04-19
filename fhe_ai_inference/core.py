@@ -1,7 +1,4 @@
-# fhe_ai_inference/core.py
 from fhe_ai_inference.ckks import setup_ckks_context
-
-import torch
 
 
 class FHEInference:
@@ -13,7 +10,16 @@ class FHEInference:
             scaling_modulus_size=scaling_modulus_size,
         )
 
-    def predict(self, input_tensor: torch.Tensor):
+        self.encoder = self.context
+        self.decoder = self.context
+        self.keypair = self.context.KeyGen()
+        self.public_key = self.keypair.publicKey
+        self.secret_key = self.keypair.secretKey
+        self.encrypt = self.context.Encrypt
+        self.decrypt = self.context.Decrypt
+
+    def predict(self, input_tensor):
+        import torch
+
         with torch.no_grad():
-            output = self.model(input_tensor)
-            return output
+            return self.model(input_tensor)
