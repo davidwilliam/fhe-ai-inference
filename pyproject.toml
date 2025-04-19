@@ -47,11 +47,16 @@ dependencies = [
 DYLD_LIBRARY_PATH = "/usr/local/lib"
 
 [tool.hatch.envs.default.scripts]
-test = "pytest --cov=fhe_ai_inference --cov-report=html"
+lint = "ruff check ."
 format = "black ."
-lint = "ruff ."
-docs = "pdoc fhe_ai_inference --output-dir docs"
-dev = "hatch run lint && hatch run format && hatch run test && hatch run docs"
+test = "pytest --cov=fhe_ai_inference --cov-report=html"
+build-docs = "pdoc fhe_ai_inference --output-dir docs"
+dev = [
+  "ruff check .",
+  "black .",
+  "pytest --cov=fhe_ai_inference --cov-report=html",
+  "pdoc fhe_ai_inference --output-dir docs"
+]
 
 [tool.ruff]
 line-length = 88

@@ -45,7 +45,7 @@ FHE-AI-Inference aims to fill a unique niche by combining OpenFHE’s CKKS schem
 
 The project is not yet installable as a package, but you can set up the development environment to contribute. 
 
-**Clone the Repository**:
+**Clone FHE AI Inference Repository**:
    ```bash
    git clone https://github.com/<your-username>/fhe-ai-inference.git
    cd fhe-ai-inference
@@ -71,7 +71,7 @@ The project is not yet installable as a package, but you can set up the developm
 ### 2. Clone & Build the OpenFHE C++ Core
 
 ```bash
-cd ~/workspace_cpp
+cd ~/workspace_python
 
 # 2.1 Clone the OpenFHE repo
 git clone https://github.com/openfheorg/openfhe-development.git openfhe
@@ -112,24 +112,21 @@ pip install pytest
 
 ### 4. Install the Python Bindings
 
-```bash
-# 4.1 Install the OpenFHE‑Python wrapper in editable mode
-pip install -e ~/workspace_cpp/openfhe-python
-```
+#### 4.1 Clone the OpenFHE-Python repo
+git clone https://github.com/openfheorg/openfhe-python.git openfhe-python
+cd openfhe
 
-#### 4.1 Install the Python Bindings
+#### 4.2 Install the Python Bindings
 
 To use the OpenFHE Python bindings in development mode:
 
 ```bash
-# 4.1 Install the OpenFHE‑Python wrapper in editable mode
-pip install -e ~/workspace_cpp/openfhe-python
+pip install -e ~/workspace_python/openfhe-python
 ```
 
 > This will link the local C++ bindings into your Python environment for live development.
 
-
-#### 4.2 (macOS Only) Patch Library RPATH
+#### 4.3 (macOS Only) Patch Library RPATH
 
 If you're on **macOS** and encounter errors like:
 
@@ -140,7 +137,7 @@ ImportError: dlopen(...openfhe.so): Library not loaded: @rpath/libOPENFHEpke.1.d
 ...it means the dynamic linker can't locate the required `.dylib` files (even if `DYLD_LIBRARY_PATH` is set). To fix this, patch the shared object to include `/usr/local/lib`:
 
 ```bash
-install_name_tool -add_rpath /usr/local/lib ~/workspace_cpp/openfhe-python/openfhe/openfhe.so
+install_name_tool -add_rpath /usr/local/lib ~/workspace_python/openfhe-python/openfhe/openfhe.so
 ```
 
 This embeds the correct library path directly into the binary so that it works consistently—even inside tools like `hatch`, `pdoc`, or test runners.
@@ -164,6 +161,12 @@ macOS’s dynamic loader must find the OpenFHE `.dylib` in `/usr/local/lib`. Eit
   )
   install_name_tool -add_rpath /usr/local/lib "$SOFILE"
   ```
+
+#### 5.1 Test the OpenFHE Python bindings
+
+```
+python -c "import openfhe; print('OpenFHE Python bindings loaded successfully!')"
+```
 
 ### 6. Run the Tests
 
@@ -267,6 +270,81 @@ python3 -m http.server --directory docs
 ```
 
 Then open [http://localhost:8000](http://localhost:8000) in your browser.
+
+## Development Environment Tips (macOS)
+
+Setting up OpenFHE can be tricky due to native library linking. If you're on macOS and plan to contribute, here's how to avoid common pitfalls:
+
+### Verifying Python Bindings Work
+
+Make sure the OpenFHE Python bindings are installed and linked correctly:
+
+```bash
+pip install -e /path/to/openfhe-python
+```
+
+Then test:
+
+```bash
+python -c "import openfhe"
+```
+
+If you see an error like:
+
+```
+ImportError: dlopen(...openfhe.so): Library not loaded: @rpath/libOPENFHEcore.1.dylib
+```
+
+See the next step.
+
+### Fixing macOS `.dylib` Linking Errors
+
+OpenFHE relies on shared libraries (e.g., `libOPENFHEpke.1.dylib`) installed in `/usr/local/lib`. If your Python binding can't find them, you need to either:
+
+**Option 1: Temporarily set `DYLD_LIBRARY_PATH`**
+
+```bash
+export DYLD_LIBRARY_PATH="/usr/local/lib:$DYLD_LIBRARY_PATH"
+```
+
+**Option 2: Permanently patch the shared object**
+
+```bash
+install_name_tool -add_rpath /usr/local/lib /path/to/openfhe-python/openfhe/openfhe.so
+```
+
+This embeds the library path into the binary so you don’t need to export anything every time.
+
+### Run the Full Dev Workflow
+
+Once OpenFHE is working and you're inside your virtual environment, use:
+
+```bash
+hatch run dev
+```
+
+This will:
+- Lint the code with Ruff
+- Format it with Black
+- Run all tests
+- Generate docs via pdoc
+
+### Troubleshooting Tips
+
+If you see errors like `not a mach-o file`, it means OpenFHE tried to load an invalid binary.
+- Check that your `.dylib` files are compiled for macOS (not Linux)
+- Rebuild OpenFHE using:
+  ```bash
+  cmake .. -DBUILD_SHARED=ON -DCMAKE_INSTALL_PREFIX=/usr/local
+  make -j$(sysctl -n hw.ncpu)
+  sudo make install
+  ```
+
+Then reinstall the Python bindings:
+```bash
+pip uninstall openfhe -y
+pip install -e /path/to/openfhe-python
+```
 
 ### Persisting Your Shell Configuration
 
