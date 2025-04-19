@@ -16,6 +16,13 @@ def setup_ckks_context(poly_modulus_degree=16384, scaling_modulus_size=45):
     context = GenCryptoContext(params)
     context.Enable(PKESchemeFeature.PKE)
     context.Enable(PKESchemeFeature.LEVELEDSHE)
-    context.KeyGen()
+    context.Enable(PKESchemeFeature.ADVANCEDSHE)  # Required for EvalSum & rotations
 
-    return context
+    keypair = context.KeyGen()
+    context.EvalSumKeyGen(keypair.secretKey)
+    context.EvalMultKeyGen(keypair.secretKey)
+    context.EvalAtIndexKeyGen(keypair.secretKey, [1, -1])
+
+    # ⚠️ DO NOT return a tuple!
+    # Return only the context — keys are stored by the caller separately
+    return context, keypair
