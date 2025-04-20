@@ -1,4 +1,4 @@
 def square_activation(ciphertext, evaluator):
-    result = evaluator.square(ciphertext)
-    evaluator.relinearize_inplace(result)
+    result = evaluator.EvalMult(ciphertext, ciphertext)
+    evaluator.Relinearize(result)
     return result

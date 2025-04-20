@@ -91,11 +91,7 @@ class CKKSOperations:
 
     def eval_sum(self, ciphertext):
         """
-        Manually sums only the active slots by controlled rotations.
-        Prevents overflow into unused parts of the ciphertext.
+        Sums all active slots using OpenFHE's EvalSum.
+        Returns a ciphertext with the sum in the first slot.
         """
-        acc = ciphertext
-        for i in range(1, self.active_slots):
-            rotated = self.eval_rotate(ciphertext, i)
-            acc = self.context.EvalAdd(acc, rotated)
-        return acc
+        return self.context.EvalSum(ciphertext, self.active_slots)

@@ -1,5 +1,3 @@
-# tests/test_fhelinear.py
-
 import torch
 from fhe_ai_inference.openfhe_ckks import CKKSOperations
 from fhe_ai_inference.layers import FHELinear
@@ -23,3 +21,12 @@ def test_fhe_linear_layer_minimal():
     expected = (torch.tensor(w) @ x + torch.tensor(b)).tolist()
     for actual, expected_val in zip(decrypted, expected):
         assert abs(actual - expected_val) < 1e-1
+
+
+def test_fhe_linear_no_ckks():
+    w = [[1.0, 0.0], [0.0, 1.0]]
+    b = [0.0, 0.0]
+
+    # Initialize FHELinear without ckks to hit the else branch
+    layer = FHELinear(w, b, ckks=None)
+    assert layer.slot_len == 2  # Length of weight_matrix[0]
