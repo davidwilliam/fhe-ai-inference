@@ -1,7 +1,7 @@
-from fhe_ai_inference.openfhe_ckks import CKKSOperations
-from fhe_ai_inference.layers import FHELinear
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 
+from fhe_ai_inference.layers import FHELinear
+from fhe_ai_inference.openfhe_ckks import CKKSOperations
 
 # Step 1: Setup CKKS context and keys
 original = [1.0, 2.0]  # Example input vector

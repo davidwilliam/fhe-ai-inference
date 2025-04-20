@@ -1,5 +1,6 @@
+from decimal import ROUND_HALF_UP, Decimal
+
 from fhe_ai_inference.openfhe_ckks import CKKSOperations
-from decimal import Decimal, ROUND_HALF_UP
 
 
 class FHELinear:

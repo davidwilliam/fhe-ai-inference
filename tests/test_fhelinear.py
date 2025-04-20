@@ -1,6 +1,7 @@
 import torch
-from fhe_ai_inference.openfhe_ckks import CKKSOperations
+
 from fhe_ai_inference.layers import FHELinear
+from fhe_ai_inference.openfhe_ckks import CKKSOperations
 
 
 def test_fhe_linear_layer_minimal():

@@ -3,24 +3,24 @@ name = "fhe-ai-inference"
 version = "0.1.0"
 description = "A Python library for secure neural network inference using Fully Homomorphic Encryption with OpenFHE"
 readme = "README.md"
-authors = [ { name = "David William Silva", email = "contact@davidwsilva.com" } ]
+authors = [{ name = "David William Silva", email = "contact@davidwsilva.com" }]
 license = { text = "MIT" }
 requires-python = ">=3.8"
 dependencies = [
-    "openfhe>=0.8.9",
-    "torch>=2.0.0",
-    "numpy>=1.23.0",
+    "openfhe==0.9.0",  # Updated from 1.1.2
+    "torch==2.6.0",
+    "numpy==2.2.4",
 ]
 
 [project.optional-dependencies]
 default = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "black>=24.0.0",
-    "ruff>=0.0.285",
-    "jupyter>=1.0.0",
-    "pre-commit>=3.5.0",
-    "hatchling"
+    "pytest==8.3.5",
+    "pytest-cov==6.1.1",
+    "black==25.1.0",
+    "ruff==0.11.6",
+    "jupyter==1.1.1",
+    "pre-commit==3.8.0",
+    "hatchling==1.25.0",
 ]
 
 [project.urls]
@@ -35,27 +35,28 @@ build-backend = "hatchling.build"
 
 [tool.hatch.envs.default]
 dependencies = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "black>=24.0.0",
-    "ruff>=0.0.285",
-    "jupyter>=1.0.0",
-    "pdoc>=14.0.0"
+    "pytest==8.3.5",
+    "pytest-cov==6.1.1",
+    "black==25.1.0",
+    "ruff==0.11.6",
+    "jupyter==1.1.1",
+    "pdoc==15.0.2",
+    "pre-commit==3.8.0",
 ]
 
 [tool.hatch.envs.default.env-vars]
 DYLD_LIBRARY_PATH = "/usr/local/lib"
 
 [tool.hatch.envs.default.scripts]
-lint = "ruff check ."
+lint = "ruff check . --fix"
 format = "black ."
-test = "pytest --cov=fhe_ai_inference --cov-report=html"
+test = "pytest --cov=fhe_ai_inference --cov-report=term --cov-report=html"
 build-docs = "pdoc fhe_ai_inference --output-dir docs"
 dev = [
-  "ruff check .",
-  "black .",
-  "pytest --cov=fhe_ai_inference --cov-report=html",
-  "pdoc fhe_ai_inference --output-dir docs"
+    "ruff check . --fix",
+    "black .",
+    "pytest --cov=fhe_ai_inference --cov-report=term --cov-report=html",
+    "pdoc fhe_ai_inference --output-dir docs",
 ]
 
 [tool.ruff]
@@ -63,4 +64,22 @@ line-length = 88
 target-version = "py38"
 
 [tool.ruff.lint]
-select = ["F", "E", "W", "C90", "RUF100"]
+select = [
+    "F",      # Pyflakes (syntax errors)
+    "E",      # PEP 8 errors
+    "W",      # PEP 8 warnings
+    "C90",    # McCabe complexity
+    "I",      # Import sorting
+    "N",      # PEP 8 naming
+    "B",      # Bugbear (common pitfalls)
+    "RUF100", # Ruff-specific (unused noqa)
+]
+fixable = ["E", "I", "N", "RUF100"]
+
+[tool.pytest.ini_options]
+addopts = "--cov=fhe_ai_inference --cov-report=term --cov-report=html --verbose"
+testpaths = ["tests"]
+
+[tool.pdoc]
+html = true
+output_dir = "docs"

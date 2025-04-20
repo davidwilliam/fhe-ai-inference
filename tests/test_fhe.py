@@ -11,7 +11,7 @@ def test_setup_ckks_context_default(monkeypatch):
         calls["level"] = security_level
 
         class FakeContext:
-            def Enable(self, feat):
+            def Enable(self, feat):  # noqa: N802
                 calls["enabled"] = feat
 
         return FakeContext()
@@ -36,7 +36,7 @@ def test_setup_ckks_context_custom(monkeypatch):
         calls["level"] = security_level
 
         class FakeContext:
-            def Enable(self, feat):
+            def Enable(self, feat):  # noqa: N802
                 calls["enabled"] = feat
 
         return FakeContext()

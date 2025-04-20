@@ -49,14 +49,14 @@
                     <h1 class="modulename">
 <a href="./../fhe_ai_inference.html">fhe_ai_inference</a><wbr>.activations    </h1>
 
-                
+
                         <input id="mod-activations-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="mod-activations-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="k">def</span><span class="w"> </span><span class="nf">square_activation</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">evaluator</span><span class="p">):</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a>    <span class="n">evaluator</span><span class="o">.</span><span class="n">relinearize_inplace</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">)</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a>    <span class="n">evaluator</span><span class="o">.</span><span class="n">Relinearize</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a>    <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
@@ -65,7 +65,7 @@
                 <section id="square_activation">
                             <input id="square_activation-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">square_activation</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ciphertext</span>, </span><span class="param"><span class="n">evaluator</span></span><span class="return-annotation">):</span></span>
 
@@ -74,13 +74,13 @@
     </div>
     <a class="headerlink" href="#square_activation"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="square_activation-2"><a href="#square_activation-2"><span class="linenos">2</span></a><span class="k">def</span><span class="w"> </span><span class="nf">square_activation</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">evaluator</span><span class="p">):</span>
-</span><span id="square_activation-3"><a href="#square_activation-3"><span class="linenos">3</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
-</span><span id="square_activation-4"><a href="#square_activation-4"><span class="linenos">4</span></a>    <span class="n">evaluator</span><span class="o">.</span><span class="n">relinearize_inplace</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="square_activation-3"><a href="#square_activation-3"><span class="linenos">3</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">)</span>
+</span><span id="square_activation-4"><a href="#square_activation-4"><span class="linenos">4</span></a>    <span class="n">evaluator</span><span class="o">.</span><span class="n">Relinearize</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </span><span id="square_activation-5"><a href="#square_activation-5"><span class="linenos">5</span></a>    <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
 
-    
+
 
                 </section>
     </main>

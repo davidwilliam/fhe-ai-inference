@@ -1,5 +1,5 @@
-from fhe_ai_inference.ckks import setup_ckks_context
 from fhe_ai_inference.activations import square_activation
+from fhe_ai_inference.ckks import setup_ckks_context
 from fhe_ai_inference.openfhe_ckks import CKKSOperations
 
 

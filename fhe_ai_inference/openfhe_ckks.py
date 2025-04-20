@@ -1,4 +1,4 @@
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 
 
 class CKKSOperations:
@@ -16,9 +16,9 @@ class CKKSOperations:
         """
         from openfhe import (
             CCParamsCKKSRNS,
-            SecurityLevel,
-            PKESchemeFeature,
             GenCryptoContext,
+            PKESchemeFeature,
+            SecurityLevel,
         )
 
         self.active_slots = slots  # ✅ Track number of real input slots

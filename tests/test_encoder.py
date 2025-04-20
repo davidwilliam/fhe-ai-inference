@@ -1,6 +1,7 @@
-from fhe_ai_inference.core import FHEInference
-from fhe_ai_inference.encoder import encrypt_tensor, decrypt_tensor
 import torch
+
+from fhe_ai_inference.core import FHEInference
+from fhe_ai_inference.encoder import decrypt_tensor, encrypt_tensor
 
 
 def test_encrypt_decrypt_tensor():

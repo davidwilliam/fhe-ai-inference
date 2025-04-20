@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+
 from fhe_ai_inference.core import FHEInference
 
 

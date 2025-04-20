@@ -1,6 +1,7 @@
 import torch
+
 from fhe_ai_inference.core import FHEInference
-from fhe_ai_inference.encoder import encrypt_tensor, decrypt_tensor
+from fhe_ai_inference.encoder import decrypt_tensor, encrypt_tensor
 
 
 def test_homomorphic_linear_inference():

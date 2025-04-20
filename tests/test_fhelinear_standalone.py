@@ -1,5 +1,5 @@
-from fhe_ai_inference.openfhe_ckks import CKKSOperations
 from fhe_ai_inference.layers.linear import FHELinear
+from fhe_ai_inference.openfhe_ckks import CKKSOperations
 
 
 def test_fhelinear_forward():
