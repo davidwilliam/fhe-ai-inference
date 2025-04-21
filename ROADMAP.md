@@ -1,62 +1,91 @@
 # FHE-AI-Inference Roadmap
 
-This document outlines the key development milestones for building a fully homomorphic encryption (FHE)-powered neural network inference library using OpenFHE and CKKS.
+This roadmap outlines the milestones for building a clean, testable, Pythonic library for secure AI inference using **Fully Homomorphic Encryption (FHE)** via **OpenFHE's CKKS scheme**.
 
-## Phase 0: Foundation
-- [x] Build & install OpenFHE C++ core
-- [x] Set up local OpenFHE Python bindings
-- [x] Configure dynamic linking (macOS and Unix)
-- [x] Create CKKS operations class (add, multiply, rotate, eval_sum)
-- [x] Write and pass end-to-end tests for encrypted vector ops
-- [x] Set up CI-style `hatch run dev` command
-- [x] Generate auto-docs using `pdoc`
-- [x] Finalize developer setup instructions in README
+Our approach emphasizes **modularity**, **developer experience**, and **practical security**, aiming to bring homomorphic AI workflows into real-world use with clarity and simplicity.
 
-## Phase 1: AI Core Infrastructure
+## Phase 0: Core Setup & Refactor
 
-> Focus: Enable basic homomorphic linear inference using encrypted inputs and model weights.
+> 🔍 Focus: Make it easy to install, use, test, and extend the library.
 
-- [ ] Design a `FHELinear` module (like PyTorch `nn.Linear`, but encrypted)
-- [ ] Support encrypted matrix-vector multiplication using CKKS
-- [ ] Approximate bias addition under encryption
-- [ ] Build helper class `FHEInference` to manage encrypted forward passes
-- [ ] Write example: Encrypted inference for a 2-layer network with toy weights
+- [x] Makefile-based full setup (OpenFHE C++ core + Python bindings)
+- [x] Create Pythonic `FHEAI` class with high-level methods
+- [x] Modularize: split core API, params, bootstrapping, etc.
+- [x] Implement homomorphic operations: `encrypt`, `decrypt`, `add`, `multiply`
+- [x] Build reproducible test suite with 100% coverage
+- [x] Enable auto-generated documentation with `pdoc`
+- [x] Write tutorials for getting started, parameter tuning, and precision drift
+- [x] Clean style with `ruff` + pre-commit hooks
+- [x] Bootstrap setup script (runs with OpenFHE, includes keygen + eval)
 
-## 🔜 Phase 2: Secure Model Tools & Format
+## Phase 1: Encrypted Neural Ops (Linear Models)
 
-> Focus: Allow encrypted model weights to be saved, loaded, and reused.
+> 🔍 Focus: Enable core encrypted model operations like linear layers and forward passes.
 
-- [ ] Define encrypted model serialization format
-- [ ] Add support for PyTorch `state_dict`–to–CKKS encoder
-- [ ] Add JSON or binary checkpointing for encrypted layers
+- [ ] Implement `FHELinear` module (analog to `torch.nn.Linear`)
+- [ ] Support encrypted matrix-vector multiplication
+- [ ] Encode and apply biases under encryption
+- [ ] Create `FHEModelRunner` for running encrypted forward passes
+- [ ] Provide an example: encrypted 2-layer network with toy weights
+
+## Phase 2: Serialization & Secure Model Sharing
+
+> 🔍 Focus: Allow encrypted weights and model configs to be saved and reused.
+
+- [ ] Define serialization format for encrypted weights and model structure
+- [ ] Support PyTorch-style conversion to CKKS plaintexts
+- [ ] Enable saving/loading CKKS-encrypted model checkpoints (JSON or binary)
+- [ ] CLI or API for loading and serving encrypted models
 
 ## Phase 3: Activation Approximation
 
-> Focus: Enable non-linear activations using polynomial approximations.
+> 🔍 Focus: Homomorphic support for non-linear layers using safe approximations.
 
-- [ ] Implement square and ReLU approximation (e.g., degree-2, degree-4)
-- [ ] Allow `FHEActivation` modules to be inserted in inference pipeline
-- [ ] Benchmark polynomial accuracy vs standard ReLU
----
+- [ ] Implement polynomial approximations: `square`, `relu`, `gelu`
+- [ ] Create `FHEActivation` module (drop-in for model graph)
+- [ ] Benchmark approximation accuracy vs computational cost
+- [ ] Plug into `FHEModelRunner` for encrypted inference
 
-## Phase 4: Secure Inference Workflow
+## Phase 4: Secure Inference on Real Data
 
-> Focus: Run encrypted inference on real datasets (MNIST, tabular, etc.)
+> 🔍 Focus: Build end-to-end inference pipelines using encrypted inputs and models.
 
-- [ ] Build `FHEModelRunner` with preprocessing, encryption, inference, decryption
-- [ ] Implement secure evaluation on encrypted input batches
-- [ ] Create examples: fraud detection, health scoring, etc.
+- [ ] Add support for batch inference (slot-packing)
+- [ ] Implement encrypted inference over tabular datasets (e.g., fraud detection, health scoring)
+- [ ] Write real-world examples and tutorials
+- [ ] Add utilities for data preprocessing and encrypted input handling
 
-## Phase 5: Optimizations & Bootstrapping
+## Phase 5: Bootstrapping & Runtime Improvements
 
-> Focus: Improve scalability, accuracy, and ciphertext freshness.
+> 🔍 Focus: Keep ciphertexts fresh and inference stable in deeper networks.
 
-- [ ] Add support for bootstrapping (if exposed in Python bindings)
-- [ ] Profile and reduce multiplicative depth for common networks
-- [ ] Add automatic slot packing/replication strategies
+- [x] Expose `bootstrap()` and `setup_bootstrap()` in a clean API
+- [x] Add `params_bootstrap.py` with a working config for OpenFHE
+- [x] Provide working bootstrapping demo script
+- [ ] Refactor `BootstrapMixin` to support iterative bootstrapping
+- [ ] Enable automatic bootstrapping within long inference chains
+- [ ] Profile and optimize depth, scale, and rotation cost
 
-## Phase 6: Docs, Demos, and Pip Package
+## Phase 6: Documentation, Tutorials & Distribution
 
-- [ ] Full documentation for all modules
-- [ ] Interactive notebook demos
-- [ ] Publish to PyPI for broader adoption
+> 🔍 Focus: Make it easy to learn, adopt, and extend the project.
+
+- [x] Create tutorial index and foundational guides (`getting_started`, `precision_drift`, `parameter_selection`)
+- [x] Add bootstrapping tutorial (in progress)
+- [ ] Write guide: “How to Build an FHE Model”
+- [ ] Publish interactive notebooks on Colab / Jupyter
+- [ ] Push to PyPI for easier adoption and feedback
+- [ ] Prepare launch with landing page and announcement blog
+
+## Stretch Goals (Post-MVP)
+
+- [ ] Support for batching with multiple encrypted vectors (slot management)
+- [ ] Add minimal `onnx` converter to CKKS encodings
+- [ ] Explore SIMD-style FHE optimizations
+- [ ] Integration with `PySyft` or other secure computation libraries
+- [ ] Web-based demo: upload encrypted input → run FHE inference → get secure output
+
+## Maintained by
+
+[David William Silva](https://github.com/davidwilliam)
+Built as a contribution for the future of **privacy-preserving AI**.
