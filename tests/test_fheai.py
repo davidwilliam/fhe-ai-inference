@@ -37,3 +37,11 @@ def test_decrypt_precision(fheai):
     ciphertext = fheai.encrypt(original)
     decrypted = fheai.decrypt(ciphertext, length=original.size)
     assert np.allclose(decrypted, original, atol=1e-5), "Precision test failed"
+
+
+def test_invalid_input(fheai):
+    """Test that invalid input types raise an error."""
+    with pytest.raises(
+        ValueError, match="Input must be a float, list of floats, or numpy array"
+    ):
+        fheai.encrypt("invalid")
