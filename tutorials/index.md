@@ -5,7 +5,7 @@ Welcome to the FHE AI Inference tutorials. Here you will find practical, well-st
 ## Available Tutorials
 
 - [Getting Started with OpenFHE (CKKS)](./getting_started_with_openfhe.md)
-  Learn how to set up OpenFHE, create encryption keys, encrypt/decrypt data, and apply basic homomorphic operations like addition, multiplication, and rotation using the CKKS scheme.
+  Learn how to set up OpenFHE, create encryption keys, encrypt/decrypt data, and apply basic homomorphic operations like addition and multiplication using the CKKS scheme.
 
 ## Coming Soon
 

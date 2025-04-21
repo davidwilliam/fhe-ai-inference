@@ -1,122 +1,127 @@
-# Getting Started with OpenFHE: A Complete Tutorial
+# Getting Started with OpenFHE (CKKS)
 
-This tutorial provides a comprehensive introduction to fully homomorphic encryption (FHE) using the CKKS scheme with OpenFHE’s Python bindings. It is designed to help new users understand the core building blocks of FHE and get hands-on experience with encryption, computation, and decryption on encrypted data.
+In this tutorial, we'll use the `fhe-ai-inference` Python library to demonstrate the essentials of Fully Homomorphic Encryption (FHE) with the CKKS scheme from OpenFHE.
 
-This tutorial uses the `fhe-ai-inference` library, which wraps and simplifies key OpenFHE features for practical use.
+We'll cover:
+
+- Initializing the FHE context
+- Encrypting and decrypting data
+- Performing basic homomorphic arithmetic (addition, multiplication)
 
 ## Prerequisites
 
-Before you begin, ensure that the following requirements are met:
-
-- Python 3.10 or higher
-- This repository is cloned and dependencies are installed
-
-Installation steps:
+Make sure you've installed the library:
 
 ```bash
-git clone https://github.com/your-repo/fhe-ai-inference.git
-cd fhe-ai-inference
-hatch shell  # or `pip install -e .`
+pip install -e .
 ```
 
-## Introduction to the CKKS Scheme
+## 1. Initialize the FHE Context
 
-CKKS is an approximate homomorphic encryption scheme. It allows arithmetic operations on encrypted real-valued vectors, with small precision loss that is tolerable in most analytics and machine learning tasks. CKKS encodes data in a complex domain and supports operations like addition, multiplication, and rotation.
-
-## Step 1: Setup CKKS Context and Key Generation
+Create a Python file named `fhe_basics.py`:
 
 ```python
-from fhe_ai_inference.openfhe_ckks import CKKSOperations
+from fhe_ai_inference.fheai import FHEAI
+import numpy as np
 
-original = [1.0, 2.0, 3.0]
-ckks = CKKSOperations(
-    poly_modulus_degree=16384,
-    scaling_modulus_size=50,
-    slots=len(original)
-)
+# Initialize FHE context
+fheai = FHEAI(mult_depth=2, scale_mod_size=50)
 ```
 
-This sets up the encryption parameters and generates the necessary public/secret keys along with rotation keys for vector operations.
+- `mult_depth`: Determines how many homomorphic multiplications you can do.
+- `scale_mod_size`: Number of bits for scaling modulus, impacts precision.
 
-## Step 2: Encrypting a Vector
+## 2. Encrypt and Decrypt Data
+
+Let's encrypt and decrypt a simple array:
 
 ```python
-ctxt = ckks.encrypt(original)
+# Original data
+data = np.array([1.5, 2.5, 3.5])
+
+# Encrypt the data
+encrypted_data = fheai.encrypt(data)
+
+# Decrypt the data (specify length to match original data size)
+decrypted_data = fheai.decrypt(encrypted_data, length=len(data))
+
+print("Original:", data)
+print("Decrypted:", decrypted_data)
 ```
 
-This converts the input vector to a plaintext object and encrypts it using the public key. The encrypted ciphertext can now be safely used in untrusted environments.
+Run it:
 
-## Step 3: Homomorphic Addition
+```bash
+python fhe_basics.py
+```
+
+You’ll see output like this:
+
+```text
+Original: [1.5 2.5 3.5]
+Decrypted: [1.5 2.5 3.5]
+```
+
+## 3. Homomorphic Addition
+
+Homomorphic addition lets you add encrypted data without decrypting it:
 
 ```python
-add_values = [10.0] * len(original)
-ctxt_add = ckks.eval_add(ctxt, add_values)
-decrypted_add = ckks.decrypt(ctxt_add)
+data1 = np.array([1, 2, 3])
+data2 = np.array([4, 5, 6])
+
+enc1 = fheai.encrypt(data1)
+enc2 = fheai.encrypt(data2)
+
+enc_sum = fheai.add(enc1, enc2)
+dec_sum = fheai.decrypt(enc_sum, length=len(data1))
+
+print("Sum:", dec_sum)
 ```
 
-The `eval_add` function adds a plaintext vector to the ciphertext in encrypted space. Decryption yields values close to the expected result.
+Output:
 
-## Step 4: Homomorphic Multiplication
+```
+Sum: [5. 7. 9.]
+```
+
+## 4. Homomorphic Multiplication
+
+Multiply encrypted data homomorphically:
 
 ```python
-mult_values = [2.0, 3.0, 4.0]
-ctxt_mult = ckks.eval_mult(ctxt, mult_values)
-decrypted_mult = ckks.decrypt(ctxt_mult)
+data1 = np.array([2, 3, 4])
+data2 = np.array([5, 6, 7])
+
+enc1 = fheai.encrypt(data1)
+enc2 = fheai.encrypt(data2)
+
+enc_product = fheai.multiply(enc1, enc2)
+dec_product = fheai.decrypt(enc_product, length=len(data1))
+
+print("Product:", dec_product)
 ```
 
-This multiplies the ciphertext vector element-wise with a plaintext vector and returns an encrypted result.
-
-## Step 5: Slot Rotations
-
-```python
-ctxt_rot_left = ckks.eval_rotate(ctxt, 1)
-ctxt_rot_right = ckks.eval_rotate(ctxt, -1)
-
-decrypted_rot_left = ckks.decrypt(ctxt_rot_left)
-decrypted_rot_right = ckks.decrypt(ctxt_rot_right)
-```
-
-CKKS supports rotating vector elements left or right using `EvalRotate`. This is often used in summation and matrix-style operations.
-
-## Step 6: Encrypted Slot Summation
-
-```python
-ctxt_sum = ckks.eval_sum(ctxt)
-decrypted_sum = ckks.decrypt(ctxt_sum)
-```
-
-Instead of summing the entire ciphertext space (which may include many padded zeros), we manually sum only the active slots using controlled rotations and additions. This produces accurate results for smaller input vectors.
-
-## Step 7: Interpreting the Results
-
-Decryption in CKKS returns complex numbers, even if real values were originally encrypted. We extract and round the real part to a target number of decimal places (default is 2). 
-
-You may observe slight differences due to the approximate nature of CKKS. These are expected and generally acceptable for applications in data science, analytics, and inference.
-
-Example output:
+Output (approximately):
 
 ```
-Original:                [1.0, 2.0, 3.0]
-Expected (add):          [11.0, 12.0, 13.0]
-Decrypted (add):         [11.0, 12.0, 13.0]
-Expected (mult):         [2.0, 6.0, 12.0]
-Decrypted (mult):        [2.0, 6.0, 12.0]
-Decrypted (rotate +1):   [2.0, 3.0, 0.0]
-Decrypted (rotate -1):   [0.0, 1.0, 2.0]
-Expected (sum):          [6.0, 6.0, 6.0]
-Decrypted (sum):         [6.0, 6.0, 6.0]
+Product: [10. 18. 28.]
 ```
 
-## Summary
+**Note:** Multiplication introduces slight numeric errors, which are normal. Usually, results will be precise up to at least 3 decimal places.
 
-This tutorial covered:
+---
 
-- Creating a CKKS encryption context using OpenFHE
-- Encrypting and decrypting vectors
-- Performing homomorphic addition and multiplication
-- Rotating encrypted vectors
-- Implementing encrypted summation using manual EvalRotate and EvalAdd
+## Next Steps
 
-The full working example can be found in [`getting_started_with_openfhe.py`](./getting_started_with_openfhe.py).
+Congratulations, you’ve successfully performed basic encryption, decryption, and homomorphic arithmetic with OpenFHE and the `fhe-ai-inference` Python library.
 
-For any further questions, consult the official [OpenFHE documentation](https://openfhe-development.readthedocs.io/en/latest/) or continue exploring this repository.
+Next, explore more advanced concepts:
+
+- Implement secure linear models (coming soon)
+- Explore real-world applications like privacy-preserving analytics
+- Experiment with bootstrapping for deeper computations
+
+Check regularly as we expand our tutorials.
+
+[← Back to Tutorials Index](./index.md)
