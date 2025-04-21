@@ -11,30 +11,32 @@ from openfhe import (
     PKESchemeFeature,
 )
 
+from fhe_ai_inference.fheai_bootstrap import BootstrapMixin
 
-class FHEAI:
-    def __init__(self, mult_depth: int = 2, scale_mod_size: int = 50):
+
+class FHEAI(BootstrapMixin):
+    def __init__(
+        self,
+        mult_depth: int = 2,
+        scale_mod_size: int = 50,
+        crypto_context: CryptoContext = None,
+    ):
         """
         Initialize FHEAI with CKKS scheme for homomorphic encryption.
-
-        Args:
-            mult_depth (int): Multiplicative depth for the circuit. Default is 2.
-            scale_mod_size (int): Number of bits for scaling modulus. Default is 50.
+        If a crypto_context is provided, it will override mult_depth and scale_mod_size.
         """
-        # Set up CKKS parameters
-        parameters = CCParamsCKKSRNS()
-        parameters.SetMultiplicativeDepth(mult_depth)
-        parameters.SetScalingModSize(scale_mod_size)
+        if crypto_context is not None:
+            self.crypto_context = crypto_context
+        else:
+            params = CCParamsCKKSRNS()
+            params.SetMultiplicativeDepth(mult_depth)
+            params.SetScalingModSize(scale_mod_size)
+            self.crypto_context = GenCryptoContext(params)
 
-        # Generate crypto context
-        self.crypto_context: CryptoContext = GenCryptoContext(parameters)
+            self.crypto_context.Enable(PKESchemeFeature.PKE)
+            self.crypto_context.Enable(PKESchemeFeature.LEVELEDSHE)
+            self.crypto_context.Enable(PKESchemeFeature.FHE)
 
-        # Enable necessary features
-        self.crypto_context.Enable(PKESchemeFeature.PKE)
-        # Enable LEVELEDSHE for EvalMult operations
-        self.crypto_context.Enable(PKESchemeFeature.LEVELEDSHE)
-
-        # Generate key pair
         self.key_pair: KeyPair = self.crypto_context.KeyGen()
         self.crypto_context.EvalMultKeyGen(self.key_pair.secretKey)
 

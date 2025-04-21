@@ -71,6 +71,22 @@ You should see a successful encryption, decryption, and homomorphic operations d
 - [Tutorials Index](tutorials/index.md): Practical guides covering key aspects of OpenFHE usage.
 - [Getting Started with OpenFHE (CKKS)](tutorials/getting_started_with_openfhe.md): Detailed introduction covering encryption, decryption, and homomorphic operations.
 
+### Bootstrapping Support
+
+Bootstrapping resets a ciphertext's noise budget, allowing deeper encrypted computations. With `fhe-ai-inference`, bootstrapping is supported through a clean `BootstrapMixin`:
+
+```python
+fhe = BootstrappableFHE()
+fhe.setup_bootstrap(level_budget=[4, 4], num_slots=8)
+cipher = fhe.encrypt([...])
+cipher = fhe.bootstrap(cipher)
+result = fhe.decrypt(cipher)
+```
+
+See [scripts/bootstrap_demo.py](scripts/bootstrap_demo.py)  for a working example.
+
+> ⚠️ Known Issue: Bootstrapping segfaults under test runners on macOS due to OpenFHE Python bindings. Tests are skipped by default.
+
 Generate and view documentation easily:
 
 ```bash

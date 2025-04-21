@@ -13,6 +13,9 @@ Welcome to the FHE AI Inference tutorials. Here you will find practical, well-st
 - [Precision and Noise Budget in CKKS](./precision_and_noise.md)
   Explore how noise accumulates during computation, how to measure drift, and how to balance precision and circuit depth when building encrypted workloads.
 
+- [Bootstrapping in CKKS](./bootstrapping.md)
+  Learn how to refresh noisy ciphertexts to extend computation lifetimes using a clean, Pythonic API built on OpenFHE.
+
 ## Coming Soon
 
 - Secure Linear Models with FHE

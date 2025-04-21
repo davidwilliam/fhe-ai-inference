@@ -37,9 +37,6 @@
                                 <a class="function" href="#FHEAI.__init__">FHEAI</a>
                         </li>
                         <li>
-                                <a class="variable" href="#FHEAI.crypto_context">crypto_context</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#FHEAI.key_pair">key_pair</a>
                         </li>
                         <li>
@@ -91,87 +88,89 @@
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="n">PKESchemeFeature</span><span class="p">,</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="p">)</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FHEAI</span><span class="p">:</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mult_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scale_mod_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">):</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">        Initialize FHEAI with CKKS scheme for homomorphic encryption.</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">        Args:</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">            mult_depth (int): Multiplicative depth for the circuit. Default is 2.</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">            scale_mod_size (int): Number of bits for scaling modulus. Default is 50.</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="c1"># Set up CKKS parameters</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="n">parameters</span> <span class="o">=</span> <span class="n">CCParamsCKKSRNS</span><span class="p">()</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>        <span class="n">parameters</span><span class="o">.</span><span class="n">SetMultiplicativeDepth</span><span class="p">(</span><span class="n">mult_depth</span><span class="p">)</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="n">parameters</span><span class="o">.</span><span class="n">SetScalingModSize</span><span class="p">(</span><span class="n">scale_mod_size</span><span class="p">)</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="c1"># Generate crypto context</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="p">:</span> <span class="n">CryptoContext</span> <span class="o">=</span> <span class="n">GenCryptoContext</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="c1"># Enable necessary features</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">PKE</span><span class="p">)</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="c1"># Enable LEVELEDSHE for EvalMult operations</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">LEVELEDSHE</span><span class="p">)</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="c1"># Generate key pair</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="p">:</span> <span class="n">KeyPair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">KeyGen</span><span class="p">()</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMultKeyGen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">        Encrypt a scalar, list, or numpy array using CKKS.</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        Args:</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">            data: Input data to encrypt (float, list of floats, or numpy array).</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">        Returns:</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">            Ciphertext: Encrypted data.</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="c1"># Convert input to numpy array for consistency</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)])</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a float, list of floats, or numpy array&quot;</span><span class="p">)</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="c1"># Encode data as plaintext</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">MakeCKKSPackedPlaintext</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="c1"># Encrypt</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Encrypt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">publicKey</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">)</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">        Decrypt a ciphertext to retrieve the original data.</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">        Args:</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">            ciphertext: Ciphertext to decrypt.</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">            length: Optional; length of original data.</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">        Returns:</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">            np.ndarray: Decrypted data as a numpy array.</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">GetRealPackedValue</span><span class="p">()</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>            <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">decrypted_data</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">decrypted_data</span><span class="p">)</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">fhe_ai_inference.fheai_bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">BootstrapMixin</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FHEAI</span><span class="p">(</span><span class="n">BootstrapMixin</span><span class="p">):</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="n">mult_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">scale_mod_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="n">crypto_context</span><span class="p">:</span> <span class="n">CryptoContext</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="p">):</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        Initialize FHEAI with CKKS scheme for homomorphic encryption.</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        If a crypto_context is provided, it will override mult_depth and scale_mod_size.</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="k">if</span> <span class="n">crypto_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span> <span class="o">=</span> <span class="n">crypto_context</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>            <span class="n">params</span> <span class="o">=</span> <span class="n">CCParamsCKKSRNS</span><span class="p">()</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>            <span class="n">params</span><span class="o">.</span><span class="n">SetMultiplicativeDepth</span><span class="p">(</span><span class="n">mult_depth</span><span class="p">)</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>            <span class="n">params</span><span class="o">.</span><span class="n">SetScalingModSize</span><span class="p">(</span><span class="n">scale_mod_size</span><span class="p">)</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span> <span class="o">=</span> <span class="n">GenCryptoContext</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">PKE</span><span class="p">)</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">LEVELEDSHE</span><span class="p">)</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">FHE</span><span class="p">)</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="p">:</span> <span class="n">KeyPair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">KeyGen</span><span class="p">()</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMultKeyGen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        Encrypt a scalar, list, or numpy array using CKKS.</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">        Args:</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">            data: Input data to encrypt (float, list of floats, or numpy array).</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">        Returns:</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">            Ciphertext: Encrypted data.</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>        <span class="c1"># Convert input to numpy array for consistency</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)])</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a float, list of floats, or numpy array&quot;</span><span class="p">)</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>        <span class="c1"># Encode data as plaintext</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">MakeCKKSPackedPlaintext</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="c1"># Encrypt</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Encrypt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">publicKey</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">)</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">        Decrypt a ciphertext to retrieve the original data.</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">        Args:</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">            ciphertext: Ciphertext to decrypt.</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">            length: Optional; length of original data.</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">        Returns:</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="sd">            np.ndarray: Decrypted data as a numpy array.</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>        <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">GetRealPackedValue</span><span class="p">()</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>            <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">decrypted_data</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
 </span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a><span class="sd">        Homomorphically add two ciphertexts.</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalAdd</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a><span class="sd">        Homomorphically multiply two ciphertexts.</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">decrypted_data</span><span class="p">)</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a><span class="sd">        Homomorphically add two ciphertexts.</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalAdd</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a><span class="sd">        Homomorphically multiply two ciphertexts.</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos">95</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos">96</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -181,92 +180,92 @@
 <div class="attr class">
 
     <span class="def">class</span>
-    <span class="name">FHEAI</span>:
+    <span class="name">FHEAI</span><wbr>(<span class="base"><a href="fheai_bootstrap.html#BootstrapMixin">fhe_ai_inference.fheai_bootstrap.BootstrapMixin</a></span>):
 
                 <label class="view-source-button" for="FHEAI-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#FHEAI"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI-16"><a href="#FHEAI-16"><span class="linenos">16</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FHEAI</span><span class="p">:</span>
-</span><span id="FHEAI-17"><a href="#FHEAI-17"><span class="linenos">17</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mult_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scale_mod_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">):</span>
-</span><span id="FHEAI-18"><a href="#FHEAI-18"><span class="linenos">18</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI-19"><a href="#FHEAI-19"><span class="linenos">19</span></a><span class="sd">        Initialize FHEAI with CKKS scheme for homomorphic encryption.</span>
-</span><span id="FHEAI-20"><a href="#FHEAI-20"><span class="linenos">20</span></a>
-</span><span id="FHEAI-21"><a href="#FHEAI-21"><span class="linenos">21</span></a><span class="sd">        Args:</span>
-</span><span id="FHEAI-22"><a href="#FHEAI-22"><span class="linenos">22</span></a><span class="sd">            mult_depth (int): Multiplicative depth for the circuit. Default is 2.</span>
-</span><span id="FHEAI-23"><a href="#FHEAI-23"><span class="linenos">23</span></a><span class="sd">            scale_mod_size (int): Number of bits for scaling modulus. Default is 50.</span>
-</span><span id="FHEAI-24"><a href="#FHEAI-24"><span class="linenos">24</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI-25"><a href="#FHEAI-25"><span class="linenos">25</span></a>        <span class="c1"># Set up CKKS parameters</span>
-</span><span id="FHEAI-26"><a href="#FHEAI-26"><span class="linenos">26</span></a>        <span class="n">parameters</span> <span class="o">=</span> <span class="n">CCParamsCKKSRNS</span><span class="p">()</span>
-</span><span id="FHEAI-27"><a href="#FHEAI-27"><span class="linenos">27</span></a>        <span class="n">parameters</span><span class="o">.</span><span class="n">SetMultiplicativeDepth</span><span class="p">(</span><span class="n">mult_depth</span><span class="p">)</span>
-</span><span id="FHEAI-28"><a href="#FHEAI-28"><span class="linenos">28</span></a>        <span class="n">parameters</span><span class="o">.</span><span class="n">SetScalingModSize</span><span class="p">(</span><span class="n">scale_mod_size</span><span class="p">)</span>
-</span><span id="FHEAI-29"><a href="#FHEAI-29"><span class="linenos">29</span></a>
-</span><span id="FHEAI-30"><a href="#FHEAI-30"><span class="linenos">30</span></a>        <span class="c1"># Generate crypto context</span>
-</span><span id="FHEAI-31"><a href="#FHEAI-31"><span class="linenos">31</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="p">:</span> <span class="n">CryptoContext</span> <span class="o">=</span> <span class="n">GenCryptoContext</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-</span><span id="FHEAI-32"><a href="#FHEAI-32"><span class="linenos">32</span></a>
-</span><span id="FHEAI-33"><a href="#FHEAI-33"><span class="linenos">33</span></a>        <span class="c1"># Enable necessary features</span>
-</span><span id="FHEAI-34"><a href="#FHEAI-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">PKE</span><span class="p">)</span>
-</span><span id="FHEAI-35"><a href="#FHEAI-35"><span class="linenos">35</span></a>        <span class="c1"># Enable LEVELEDSHE for EvalMult operations</span>
-</span><span id="FHEAI-36"><a href="#FHEAI-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">LEVELEDSHE</span><span class="p">)</span>
-</span><span id="FHEAI-37"><a href="#FHEAI-37"><span class="linenos">37</span></a>
-</span><span id="FHEAI-38"><a href="#FHEAI-38"><span class="linenos">38</span></a>        <span class="c1"># Generate key pair</span>
-</span><span id="FHEAI-39"><a href="#FHEAI-39"><span class="linenos">39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="p">:</span> <span class="n">KeyPair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">KeyGen</span><span class="p">()</span>
-</span><span id="FHEAI-40"><a href="#FHEAI-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMultKeyGen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
-</span><span id="FHEAI-41"><a href="#FHEAI-41"><span class="linenos">41</span></a>
-</span><span id="FHEAI-42"><a href="#FHEAI-42"><span class="linenos">42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
-</span><span id="FHEAI-43"><a href="#FHEAI-43"><span class="linenos">43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI-44"><a href="#FHEAI-44"><span class="linenos">44</span></a><span class="sd">        Encrypt a scalar, list, or numpy array using CKKS.</span>
-</span><span id="FHEAI-45"><a href="#FHEAI-45"><span class="linenos">45</span></a>
-</span><span id="FHEAI-46"><a href="#FHEAI-46"><span class="linenos">46</span></a><span class="sd">        Args:</span>
-</span><span id="FHEAI-47"><a href="#FHEAI-47"><span class="linenos">47</span></a><span class="sd">            data: Input data to encrypt (float, list of floats, or numpy array).</span>
-</span><span id="FHEAI-48"><a href="#FHEAI-48"><span class="linenos">48</span></a>
-</span><span id="FHEAI-49"><a href="#FHEAI-49"><span class="linenos">49</span></a><span class="sd">        Returns:</span>
-</span><span id="FHEAI-50"><a href="#FHEAI-50"><span class="linenos">50</span></a><span class="sd">            Ciphertext: Encrypted data.</span>
-</span><span id="FHEAI-51"><a href="#FHEAI-51"><span class="linenos">51</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI-52"><a href="#FHEAI-52"><span class="linenos">52</span></a>        <span class="c1"># Convert input to numpy array for consistency</span>
-</span><span id="FHEAI-53"><a href="#FHEAI-53"><span class="linenos">53</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
-</span><span id="FHEAI-54"><a href="#FHEAI-54"><span class="linenos">54</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)])</span>
-</span><span id="FHEAI-55"><a href="#FHEAI-55"><span class="linenos">55</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="FHEAI-56"><a href="#FHEAI-56"><span class="linenos">56</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-</span><span id="FHEAI-57"><a href="#FHEAI-57"><span class="linenos">57</span></a>        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-</span><span id="FHEAI-58"><a href="#FHEAI-58"><span class="linenos">58</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a float, list of floats, or numpy array&quot;</span><span class="p">)</span>
-</span><span id="FHEAI-59"><a href="#FHEAI-59"><span class="linenos">59</span></a>
-</span><span id="FHEAI-60"><a href="#FHEAI-60"><span class="linenos">60</span></a>        <span class="c1"># Encode data as plaintext</span>
-</span><span id="FHEAI-61"><a href="#FHEAI-61"><span class="linenos">61</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">MakeCKKSPackedPlaintext</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-</span><span id="FHEAI-62"><a href="#FHEAI-62"><span class="linenos">62</span></a>
-</span><span id="FHEAI-63"><a href="#FHEAI-63"><span class="linenos">63</span></a>        <span class="c1"># Encrypt</span>
-</span><span id="FHEAI-64"><a href="#FHEAI-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Encrypt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">publicKey</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">)</span>
-</span><span id="FHEAI-65"><a href="#FHEAI-65"><span class="linenos">65</span></a>
-</span><span id="FHEAI-66"><a href="#FHEAI-66"><span class="linenos">66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="FHEAI-67"><a href="#FHEAI-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI-68"><a href="#FHEAI-68"><span class="linenos">68</span></a><span class="sd">        Decrypt a ciphertext to retrieve the original data.</span>
-</span><span id="FHEAI-69"><a href="#FHEAI-69"><span class="linenos">69</span></a>
-</span><span id="FHEAI-70"><a href="#FHEAI-70"><span class="linenos">70</span></a><span class="sd">        Args:</span>
-</span><span id="FHEAI-71"><a href="#FHEAI-71"><span class="linenos">71</span></a><span class="sd">            ciphertext: Ciphertext to decrypt.</span>
-</span><span id="FHEAI-72"><a href="#FHEAI-72"><span class="linenos">72</span></a><span class="sd">            length: Optional; length of original data.</span>
-</span><span id="FHEAI-73"><a href="#FHEAI-73"><span class="linenos">73</span></a>
-</span><span id="FHEAI-74"><a href="#FHEAI-74"><span class="linenos">74</span></a><span class="sd">        Returns:</span>
-</span><span id="FHEAI-75"><a href="#FHEAI-75"><span class="linenos">75</span></a><span class="sd">            np.ndarray: Decrypted data as a numpy array.</span>
-</span><span id="FHEAI-76"><a href="#FHEAI-76"><span class="linenos">76</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI-77"><a href="#FHEAI-77"><span class="linenos">77</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
-</span><span id="FHEAI-78"><a href="#FHEAI-78"><span class="linenos">78</span></a>        <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">GetRealPackedValue</span><span class="p">()</span>
-</span><span id="FHEAI-79"><a href="#FHEAI-79"><span class="linenos">79</span></a>
-</span><span id="FHEAI-80"><a href="#FHEAI-80"><span class="linenos">80</span></a>        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="FHEAI-81"><a href="#FHEAI-81"><span class="linenos">81</span></a>            <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">decrypted_data</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
-</span><span id="FHEAI-82"><a href="#FHEAI-82"><span class="linenos">82</span></a>
-</span><span id="FHEAI-83"><a href="#FHEAI-83"><span class="linenos">83</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">decrypted_data</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI-18"><a href="#FHEAI-18"><span class="linenos">18</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FHEAI</span><span class="p">(</span><span class="n">BootstrapMixin</span><span class="p">):</span>
+</span><span id="FHEAI-19"><a href="#FHEAI-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="FHEAI-20"><a href="#FHEAI-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="FHEAI-21"><a href="#FHEAI-21"><span class="linenos">21</span></a>        <span class="n">mult_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span id="FHEAI-22"><a href="#FHEAI-22"><span class="linenos">22</span></a>        <span class="n">scale_mod_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+</span><span id="FHEAI-23"><a href="#FHEAI-23"><span class="linenos">23</span></a>        <span class="n">crypto_context</span><span class="p">:</span> <span class="n">CryptoContext</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="FHEAI-24"><a href="#FHEAI-24"><span class="linenos">24</span></a>    <span class="p">):</span>
+</span><span id="FHEAI-25"><a href="#FHEAI-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI-26"><a href="#FHEAI-26"><span class="linenos">26</span></a><span class="sd">        Initialize FHEAI with CKKS scheme for homomorphic encryption.</span>
+</span><span id="FHEAI-27"><a href="#FHEAI-27"><span class="linenos">27</span></a><span class="sd">        If a crypto_context is provided, it will override mult_depth and scale_mod_size.</span>
+</span><span id="FHEAI-28"><a href="#FHEAI-28"><span class="linenos">28</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI-29"><a href="#FHEAI-29"><span class="linenos">29</span></a>        <span class="k">if</span> <span class="n">crypto_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FHEAI-30"><a href="#FHEAI-30"><span class="linenos">30</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span> <span class="o">=</span> <span class="n">crypto_context</span>
+</span><span id="FHEAI-31"><a href="#FHEAI-31"><span class="linenos">31</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="FHEAI-32"><a href="#FHEAI-32"><span class="linenos">32</span></a>            <span class="n">params</span> <span class="o">=</span> <span class="n">CCParamsCKKSRNS</span><span class="p">()</span>
+</span><span id="FHEAI-33"><a href="#FHEAI-33"><span class="linenos">33</span></a>            <span class="n">params</span><span class="o">.</span><span class="n">SetMultiplicativeDepth</span><span class="p">(</span><span class="n">mult_depth</span><span class="p">)</span>
+</span><span id="FHEAI-34"><a href="#FHEAI-34"><span class="linenos">34</span></a>            <span class="n">params</span><span class="o">.</span><span class="n">SetScalingModSize</span><span class="p">(</span><span class="n">scale_mod_size</span><span class="p">)</span>
+</span><span id="FHEAI-35"><a href="#FHEAI-35"><span class="linenos">35</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span> <span class="o">=</span> <span class="n">GenCryptoContext</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="FHEAI-36"><a href="#FHEAI-36"><span class="linenos">36</span></a>
+</span><span id="FHEAI-37"><a href="#FHEAI-37"><span class="linenos">37</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">PKE</span><span class="p">)</span>
+</span><span id="FHEAI-38"><a href="#FHEAI-38"><span class="linenos">38</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">LEVELEDSHE</span><span class="p">)</span>
+</span><span id="FHEAI-39"><a href="#FHEAI-39"><span class="linenos">39</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">FHE</span><span class="p">)</span>
+</span><span id="FHEAI-40"><a href="#FHEAI-40"><span class="linenos">40</span></a>
+</span><span id="FHEAI-41"><a href="#FHEAI-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="p">:</span> <span class="n">KeyPair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">KeyGen</span><span class="p">()</span>
+</span><span id="FHEAI-42"><a href="#FHEAI-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMultKeyGen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
+</span><span id="FHEAI-43"><a href="#FHEAI-43"><span class="linenos">43</span></a>
+</span><span id="FHEAI-44"><a href="#FHEAI-44"><span class="linenos">44</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI-45"><a href="#FHEAI-45"><span class="linenos">45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI-46"><a href="#FHEAI-46"><span class="linenos">46</span></a><span class="sd">        Encrypt a scalar, list, or numpy array using CKKS.</span>
+</span><span id="FHEAI-47"><a href="#FHEAI-47"><span class="linenos">47</span></a>
+</span><span id="FHEAI-48"><a href="#FHEAI-48"><span class="linenos">48</span></a><span class="sd">        Args:</span>
+</span><span id="FHEAI-49"><a href="#FHEAI-49"><span class="linenos">49</span></a><span class="sd">            data: Input data to encrypt (float, list of floats, or numpy array).</span>
+</span><span id="FHEAI-50"><a href="#FHEAI-50"><span class="linenos">50</span></a>
+</span><span id="FHEAI-51"><a href="#FHEAI-51"><span class="linenos">51</span></a><span class="sd">        Returns:</span>
+</span><span id="FHEAI-52"><a href="#FHEAI-52"><span class="linenos">52</span></a><span class="sd">            Ciphertext: Encrypted data.</span>
+</span><span id="FHEAI-53"><a href="#FHEAI-53"><span class="linenos">53</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI-54"><a href="#FHEAI-54"><span class="linenos">54</span></a>        <span class="c1"># Convert input to numpy array for consistency</span>
+</span><span id="FHEAI-55"><a href="#FHEAI-55"><span class="linenos">55</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+</span><span id="FHEAI-56"><a href="#FHEAI-56"><span class="linenos">56</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)])</span>
+</span><span id="FHEAI-57"><a href="#FHEAI-57"><span class="linenos">57</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="FHEAI-58"><a href="#FHEAI-58"><span class="linenos">58</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span><span id="FHEAI-59"><a href="#FHEAI-59"><span class="linenos">59</span></a>        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+</span><span id="FHEAI-60"><a href="#FHEAI-60"><span class="linenos">60</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a float, list of floats, or numpy array&quot;</span><span class="p">)</span>
+</span><span id="FHEAI-61"><a href="#FHEAI-61"><span class="linenos">61</span></a>
+</span><span id="FHEAI-62"><a href="#FHEAI-62"><span class="linenos">62</span></a>        <span class="c1"># Encode data as plaintext</span>
+</span><span id="FHEAI-63"><a href="#FHEAI-63"><span class="linenos">63</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">MakeCKKSPackedPlaintext</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+</span><span id="FHEAI-64"><a href="#FHEAI-64"><span class="linenos">64</span></a>
+</span><span id="FHEAI-65"><a href="#FHEAI-65"><span class="linenos">65</span></a>        <span class="c1"># Encrypt</span>
+</span><span id="FHEAI-66"><a href="#FHEAI-66"><span class="linenos">66</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Encrypt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">publicKey</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">)</span>
+</span><span id="FHEAI-67"><a href="#FHEAI-67"><span class="linenos">67</span></a>
+</span><span id="FHEAI-68"><a href="#FHEAI-68"><span class="linenos">68</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="FHEAI-69"><a href="#FHEAI-69"><span class="linenos">69</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI-70"><a href="#FHEAI-70"><span class="linenos">70</span></a><span class="sd">        Decrypt a ciphertext to retrieve the original data.</span>
+</span><span id="FHEAI-71"><a href="#FHEAI-71"><span class="linenos">71</span></a>
+</span><span id="FHEAI-72"><a href="#FHEAI-72"><span class="linenos">72</span></a><span class="sd">        Args:</span>
+</span><span id="FHEAI-73"><a href="#FHEAI-73"><span class="linenos">73</span></a><span class="sd">            ciphertext: Ciphertext to decrypt.</span>
+</span><span id="FHEAI-74"><a href="#FHEAI-74"><span class="linenos">74</span></a><span class="sd">            length: Optional; length of original data.</span>
+</span><span id="FHEAI-75"><a href="#FHEAI-75"><span class="linenos">75</span></a>
+</span><span id="FHEAI-76"><a href="#FHEAI-76"><span class="linenos">76</span></a><span class="sd">        Returns:</span>
+</span><span id="FHEAI-77"><a href="#FHEAI-77"><span class="linenos">77</span></a><span class="sd">            np.ndarray: Decrypted data as a numpy array.</span>
+</span><span id="FHEAI-78"><a href="#FHEAI-78"><span class="linenos">78</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI-79"><a href="#FHEAI-79"><span class="linenos">79</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
+</span><span id="FHEAI-80"><a href="#FHEAI-80"><span class="linenos">80</span></a>        <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">GetRealPackedValue</span><span class="p">()</span>
+</span><span id="FHEAI-81"><a href="#FHEAI-81"><span class="linenos">81</span></a>
+</span><span id="FHEAI-82"><a href="#FHEAI-82"><span class="linenos">82</span></a>        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FHEAI-83"><a href="#FHEAI-83"><span class="linenos">83</span></a>            <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">decrypted_data</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
 </span><span id="FHEAI-84"><a href="#FHEAI-84"><span class="linenos">84</span></a>
-</span><span id="FHEAI-85"><a href="#FHEAI-85"><span class="linenos">85</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
-</span><span id="FHEAI-86"><a href="#FHEAI-86"><span class="linenos">86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI-87"><a href="#FHEAI-87"><span class="linenos">87</span></a><span class="sd">        Homomorphically add two ciphertexts.</span>
-</span><span id="FHEAI-88"><a href="#FHEAI-88"><span class="linenos">88</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI-89"><a href="#FHEAI-89"><span class="linenos">89</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalAdd</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
-</span><span id="FHEAI-90"><a href="#FHEAI-90"><span class="linenos">90</span></a>
-</span><span id="FHEAI-91"><a href="#FHEAI-91"><span class="linenos">91</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
-</span><span id="FHEAI-92"><a href="#FHEAI-92"><span class="linenos">92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI-93"><a href="#FHEAI-93"><span class="linenos">93</span></a><span class="sd">        Homomorphically multiply two ciphertexts.</span>
-</span><span id="FHEAI-94"><a href="#FHEAI-94"><span class="linenos">94</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI-95"><a href="#FHEAI-95"><span class="linenos">95</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+</span><span id="FHEAI-85"><a href="#FHEAI-85"><span class="linenos">85</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">decrypted_data</span><span class="p">)</span>
+</span><span id="FHEAI-86"><a href="#FHEAI-86"><span class="linenos">86</span></a>
+</span><span id="FHEAI-87"><a href="#FHEAI-87"><span class="linenos">87</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI-88"><a href="#FHEAI-88"><span class="linenos">88</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI-89"><a href="#FHEAI-89"><span class="linenos">89</span></a><span class="sd">        Homomorphically add two ciphertexts.</span>
+</span><span id="FHEAI-90"><a href="#FHEAI-90"><span class="linenos">90</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI-91"><a href="#FHEAI-91"><span class="linenos">91</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalAdd</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+</span><span id="FHEAI-92"><a href="#FHEAI-92"><span class="linenos">92</span></a>
+</span><span id="FHEAI-93"><a href="#FHEAI-93"><span class="linenos">93</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI-94"><a href="#FHEAI-94"><span class="linenos">94</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI-95"><a href="#FHEAI-95"><span class="linenos">95</span></a><span class="sd">        Homomorphically multiply two ciphertexts.</span>
+</span><span id="FHEAI-96"><a href="#FHEAI-96"><span class="linenos">96</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI-97"><a href="#FHEAI-97"><span class="linenos">97</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -276,56 +275,42 @@
                                         <input id="FHEAI.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
 
-        <span class="name">FHEAI</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">mult_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>, </span><span class="param"><span class="n">scale_mod_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span></span>)</span>
+        <span class="name">FHEAI</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">mult_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>,</span><span class="param">	<span class="n">scale_mod_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>,</span><span class="param">	<span class="n">crypto_context</span><span class="p">:</span> <span class="n">openfhe</span><span class="o">.</span><span class="n">openfhe</span><span class="o">.</span><span class="n">CryptoContext</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
                 <label class="view-source-button" for="FHEAI.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#FHEAI.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.__init__-17"><a href="#FHEAI.__init__-17"><span class="linenos">17</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mult_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scale_mod_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">):</span>
-</span><span id="FHEAI.__init__-18"><a href="#FHEAI.__init__-18"><span class="linenos">18</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI.__init__-19"><a href="#FHEAI.__init__-19"><span class="linenos">19</span></a><span class="sd">        Initialize FHEAI with CKKS scheme for homomorphic encryption.</span>
-</span><span id="FHEAI.__init__-20"><a href="#FHEAI.__init__-20"><span class="linenos">20</span></a>
-</span><span id="FHEAI.__init__-21"><a href="#FHEAI.__init__-21"><span class="linenos">21</span></a><span class="sd">        Args:</span>
-</span><span id="FHEAI.__init__-22"><a href="#FHEAI.__init__-22"><span class="linenos">22</span></a><span class="sd">            mult_depth (int): Multiplicative depth for the circuit. Default is 2.</span>
-</span><span id="FHEAI.__init__-23"><a href="#FHEAI.__init__-23"><span class="linenos">23</span></a><span class="sd">            scale_mod_size (int): Number of bits for scaling modulus. Default is 50.</span>
-</span><span id="FHEAI.__init__-24"><a href="#FHEAI.__init__-24"><span class="linenos">24</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI.__init__-25"><a href="#FHEAI.__init__-25"><span class="linenos">25</span></a>        <span class="c1"># Set up CKKS parameters</span>
-</span><span id="FHEAI.__init__-26"><a href="#FHEAI.__init__-26"><span class="linenos">26</span></a>        <span class="n">parameters</span> <span class="o">=</span> <span class="n">CCParamsCKKSRNS</span><span class="p">()</span>
-</span><span id="FHEAI.__init__-27"><a href="#FHEAI.__init__-27"><span class="linenos">27</span></a>        <span class="n">parameters</span><span class="o">.</span><span class="n">SetMultiplicativeDepth</span><span class="p">(</span><span class="n">mult_depth</span><span class="p">)</span>
-</span><span id="FHEAI.__init__-28"><a href="#FHEAI.__init__-28"><span class="linenos">28</span></a>        <span class="n">parameters</span><span class="o">.</span><span class="n">SetScalingModSize</span><span class="p">(</span><span class="n">scale_mod_size</span><span class="p">)</span>
-</span><span id="FHEAI.__init__-29"><a href="#FHEAI.__init__-29"><span class="linenos">29</span></a>
-</span><span id="FHEAI.__init__-30"><a href="#FHEAI.__init__-30"><span class="linenos">30</span></a>        <span class="c1"># Generate crypto context</span>
-</span><span id="FHEAI.__init__-31"><a href="#FHEAI.__init__-31"><span class="linenos">31</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="p">:</span> <span class="n">CryptoContext</span> <span class="o">=</span> <span class="n">GenCryptoContext</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-</span><span id="FHEAI.__init__-32"><a href="#FHEAI.__init__-32"><span class="linenos">32</span></a>
-</span><span id="FHEAI.__init__-33"><a href="#FHEAI.__init__-33"><span class="linenos">33</span></a>        <span class="c1"># Enable necessary features</span>
-</span><span id="FHEAI.__init__-34"><a href="#FHEAI.__init__-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">PKE</span><span class="p">)</span>
-</span><span id="FHEAI.__init__-35"><a href="#FHEAI.__init__-35"><span class="linenos">35</span></a>        <span class="c1"># Enable LEVELEDSHE for EvalMult operations</span>
-</span><span id="FHEAI.__init__-36"><a href="#FHEAI.__init__-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">LEVELEDSHE</span><span class="p">)</span>
-</span><span id="FHEAI.__init__-37"><a href="#FHEAI.__init__-37"><span class="linenos">37</span></a>
-</span><span id="FHEAI.__init__-38"><a href="#FHEAI.__init__-38"><span class="linenos">38</span></a>        <span class="c1"># Generate key pair</span>
-</span><span id="FHEAI.__init__-39"><a href="#FHEAI.__init__-39"><span class="linenos">39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="p">:</span> <span class="n">KeyPair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">KeyGen</span><span class="p">()</span>
-</span><span id="FHEAI.__init__-40"><a href="#FHEAI.__init__-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMultKeyGen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.__init__-19"><a href="#FHEAI.__init__-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="FHEAI.__init__-20"><a href="#FHEAI.__init__-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="FHEAI.__init__-21"><a href="#FHEAI.__init__-21"><span class="linenos">21</span></a>        <span class="n">mult_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span id="FHEAI.__init__-22"><a href="#FHEAI.__init__-22"><span class="linenos">22</span></a>        <span class="n">scale_mod_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+</span><span id="FHEAI.__init__-23"><a href="#FHEAI.__init__-23"><span class="linenos">23</span></a>        <span class="n">crypto_context</span><span class="p">:</span> <span class="n">CryptoContext</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="FHEAI.__init__-24"><a href="#FHEAI.__init__-24"><span class="linenos">24</span></a>    <span class="p">):</span>
+</span><span id="FHEAI.__init__-25"><a href="#FHEAI.__init__-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI.__init__-26"><a href="#FHEAI.__init__-26"><span class="linenos">26</span></a><span class="sd">        Initialize FHEAI with CKKS scheme for homomorphic encryption.</span>
+</span><span id="FHEAI.__init__-27"><a href="#FHEAI.__init__-27"><span class="linenos">27</span></a><span class="sd">        If a crypto_context is provided, it will override mult_depth and scale_mod_size.</span>
+</span><span id="FHEAI.__init__-28"><a href="#FHEAI.__init__-28"><span class="linenos">28</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI.__init__-29"><a href="#FHEAI.__init__-29"><span class="linenos">29</span></a>        <span class="k">if</span> <span class="n">crypto_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FHEAI.__init__-30"><a href="#FHEAI.__init__-30"><span class="linenos">30</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span> <span class="o">=</span> <span class="n">crypto_context</span>
+</span><span id="FHEAI.__init__-31"><a href="#FHEAI.__init__-31"><span class="linenos">31</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="FHEAI.__init__-32"><a href="#FHEAI.__init__-32"><span class="linenos">32</span></a>            <span class="n">params</span> <span class="o">=</span> <span class="n">CCParamsCKKSRNS</span><span class="p">()</span>
+</span><span id="FHEAI.__init__-33"><a href="#FHEAI.__init__-33"><span class="linenos">33</span></a>            <span class="n">params</span><span class="o">.</span><span class="n">SetMultiplicativeDepth</span><span class="p">(</span><span class="n">mult_depth</span><span class="p">)</span>
+</span><span id="FHEAI.__init__-34"><a href="#FHEAI.__init__-34"><span class="linenos">34</span></a>            <span class="n">params</span><span class="o">.</span><span class="n">SetScalingModSize</span><span class="p">(</span><span class="n">scale_mod_size</span><span class="p">)</span>
+</span><span id="FHEAI.__init__-35"><a href="#FHEAI.__init__-35"><span class="linenos">35</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span> <span class="o">=</span> <span class="n">GenCryptoContext</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="FHEAI.__init__-36"><a href="#FHEAI.__init__-36"><span class="linenos">36</span></a>
+</span><span id="FHEAI.__init__-37"><a href="#FHEAI.__init__-37"><span class="linenos">37</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">PKE</span><span class="p">)</span>
+</span><span id="FHEAI.__init__-38"><a href="#FHEAI.__init__-38"><span class="linenos">38</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">LEVELEDSHE</span><span class="p">)</span>
+</span><span id="FHEAI.__init__-39"><a href="#FHEAI.__init__-39"><span class="linenos">39</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">PKESchemeFeature</span><span class="o">.</span><span class="n">FHE</span><span class="p">)</span>
+</span><span id="FHEAI.__init__-40"><a href="#FHEAI.__init__-40"><span class="linenos">40</span></a>
+</span><span id="FHEAI.__init__-41"><a href="#FHEAI.__init__-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="p">:</span> <span class="n">KeyPair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">KeyGen</span><span class="p">()</span>
+</span><span id="FHEAI.__init__-42"><a href="#FHEAI.__init__-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMultKeyGen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Initialize FHEAI with CKKS scheme for homomorphic encryption.</p>
-
-<p>Args:
-    mult_depth (int): Multiplicative depth for the circuit. Default is 2.
-    scale_mod_size (int): Number of bits for scaling modulus. Default is 50.</p>
+            <div class="docstring"><p>Initialize FHEAI with CKKS scheme for homomorphic encryption.
+If a crypto_context is provided, it will override mult_depth and scale_mod_size.</p>
 </div>
-
-
-                            </div>
-                            <div id="FHEAI.crypto_context" class="classattr">
-                                <div class="attr variable">
-            <span class="name">crypto_context</span><span class="annotation">: openfhe.openfhe.CryptoContext</span>
-
-
-    </div>
-    <a class="headerlink" href="#FHEAI.crypto_context"></a>
-
 
 
                             </div>
@@ -351,29 +336,29 @@
 
     </div>
     <a class="headerlink" href="#FHEAI.encrypt"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.encrypt-42"><a href="#FHEAI.encrypt-42"><span class="linenos">42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
-</span><span id="FHEAI.encrypt-43"><a href="#FHEAI.encrypt-43"><span class="linenos">43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI.encrypt-44"><a href="#FHEAI.encrypt-44"><span class="linenos">44</span></a><span class="sd">        Encrypt a scalar, list, or numpy array using CKKS.</span>
-</span><span id="FHEAI.encrypt-45"><a href="#FHEAI.encrypt-45"><span class="linenos">45</span></a>
-</span><span id="FHEAI.encrypt-46"><a href="#FHEAI.encrypt-46"><span class="linenos">46</span></a><span class="sd">        Args:</span>
-</span><span id="FHEAI.encrypt-47"><a href="#FHEAI.encrypt-47"><span class="linenos">47</span></a><span class="sd">            data: Input data to encrypt (float, list of floats, or numpy array).</span>
-</span><span id="FHEAI.encrypt-48"><a href="#FHEAI.encrypt-48"><span class="linenos">48</span></a>
-</span><span id="FHEAI.encrypt-49"><a href="#FHEAI.encrypt-49"><span class="linenos">49</span></a><span class="sd">        Returns:</span>
-</span><span id="FHEAI.encrypt-50"><a href="#FHEAI.encrypt-50"><span class="linenos">50</span></a><span class="sd">            Ciphertext: Encrypted data.</span>
-</span><span id="FHEAI.encrypt-51"><a href="#FHEAI.encrypt-51"><span class="linenos">51</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI.encrypt-52"><a href="#FHEAI.encrypt-52"><span class="linenos">52</span></a>        <span class="c1"># Convert input to numpy array for consistency</span>
-</span><span id="FHEAI.encrypt-53"><a href="#FHEAI.encrypt-53"><span class="linenos">53</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
-</span><span id="FHEAI.encrypt-54"><a href="#FHEAI.encrypt-54"><span class="linenos">54</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)])</span>
-</span><span id="FHEAI.encrypt-55"><a href="#FHEAI.encrypt-55"><span class="linenos">55</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="FHEAI.encrypt-56"><a href="#FHEAI.encrypt-56"><span class="linenos">56</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-</span><span id="FHEAI.encrypt-57"><a href="#FHEAI.encrypt-57"><span class="linenos">57</span></a>        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-</span><span id="FHEAI.encrypt-58"><a href="#FHEAI.encrypt-58"><span class="linenos">58</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a float, list of floats, or numpy array&quot;</span><span class="p">)</span>
-</span><span id="FHEAI.encrypt-59"><a href="#FHEAI.encrypt-59"><span class="linenos">59</span></a>
-</span><span id="FHEAI.encrypt-60"><a href="#FHEAI.encrypt-60"><span class="linenos">60</span></a>        <span class="c1"># Encode data as plaintext</span>
-</span><span id="FHEAI.encrypt-61"><a href="#FHEAI.encrypt-61"><span class="linenos">61</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">MakeCKKSPackedPlaintext</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-</span><span id="FHEAI.encrypt-62"><a href="#FHEAI.encrypt-62"><span class="linenos">62</span></a>
-</span><span id="FHEAI.encrypt-63"><a href="#FHEAI.encrypt-63"><span class="linenos">63</span></a>        <span class="c1"># Encrypt</span>
-</span><span id="FHEAI.encrypt-64"><a href="#FHEAI.encrypt-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Encrypt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">publicKey</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.encrypt-44"><a href="#FHEAI.encrypt-44"><span class="linenos">44</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI.encrypt-45"><a href="#FHEAI.encrypt-45"><span class="linenos">45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI.encrypt-46"><a href="#FHEAI.encrypt-46"><span class="linenos">46</span></a><span class="sd">        Encrypt a scalar, list, or numpy array using CKKS.</span>
+</span><span id="FHEAI.encrypt-47"><a href="#FHEAI.encrypt-47"><span class="linenos">47</span></a>
+</span><span id="FHEAI.encrypt-48"><a href="#FHEAI.encrypt-48"><span class="linenos">48</span></a><span class="sd">        Args:</span>
+</span><span id="FHEAI.encrypt-49"><a href="#FHEAI.encrypt-49"><span class="linenos">49</span></a><span class="sd">            data: Input data to encrypt (float, list of floats, or numpy array).</span>
+</span><span id="FHEAI.encrypt-50"><a href="#FHEAI.encrypt-50"><span class="linenos">50</span></a>
+</span><span id="FHEAI.encrypt-51"><a href="#FHEAI.encrypt-51"><span class="linenos">51</span></a><span class="sd">        Returns:</span>
+</span><span id="FHEAI.encrypt-52"><a href="#FHEAI.encrypt-52"><span class="linenos">52</span></a><span class="sd">            Ciphertext: Encrypted data.</span>
+</span><span id="FHEAI.encrypt-53"><a href="#FHEAI.encrypt-53"><span class="linenos">53</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI.encrypt-54"><a href="#FHEAI.encrypt-54"><span class="linenos">54</span></a>        <span class="c1"># Convert input to numpy array for consistency</span>
+</span><span id="FHEAI.encrypt-55"><a href="#FHEAI.encrypt-55"><span class="linenos">55</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+</span><span id="FHEAI.encrypt-56"><a href="#FHEAI.encrypt-56"><span class="linenos">56</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)])</span>
+</span><span id="FHEAI.encrypt-57"><a href="#FHEAI.encrypt-57"><span class="linenos">57</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="FHEAI.encrypt-58"><a href="#FHEAI.encrypt-58"><span class="linenos">58</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</span><span id="FHEAI.encrypt-59"><a href="#FHEAI.encrypt-59"><span class="linenos">59</span></a>        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+</span><span id="FHEAI.encrypt-60"><a href="#FHEAI.encrypt-60"><span class="linenos">60</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a float, list of floats, or numpy array&quot;</span><span class="p">)</span>
+</span><span id="FHEAI.encrypt-61"><a href="#FHEAI.encrypt-61"><span class="linenos">61</span></a>
+</span><span id="FHEAI.encrypt-62"><a href="#FHEAI.encrypt-62"><span class="linenos">62</span></a>        <span class="c1"># Encode data as plaintext</span>
+</span><span id="FHEAI.encrypt-63"><a href="#FHEAI.encrypt-63"><span class="linenos">63</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">MakeCKKSPackedPlaintext</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+</span><span id="FHEAI.encrypt-64"><a href="#FHEAI.encrypt-64"><span class="linenos">64</span></a>
+</span><span id="FHEAI.encrypt-65"><a href="#FHEAI.encrypt-65"><span class="linenos">65</span></a>        <span class="c1"># Encrypt</span>
+</span><span id="FHEAI.encrypt-66"><a href="#FHEAI.encrypt-66"><span class="linenos">66</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Encrypt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">publicKey</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -399,24 +384,24 @@
 
     </div>
     <a class="headerlink" href="#FHEAI.decrypt"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.decrypt-66"><a href="#FHEAI.decrypt-66"><span class="linenos">66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="FHEAI.decrypt-67"><a href="#FHEAI.decrypt-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI.decrypt-68"><a href="#FHEAI.decrypt-68"><span class="linenos">68</span></a><span class="sd">        Decrypt a ciphertext to retrieve the original data.</span>
-</span><span id="FHEAI.decrypt-69"><a href="#FHEAI.decrypt-69"><span class="linenos">69</span></a>
-</span><span id="FHEAI.decrypt-70"><a href="#FHEAI.decrypt-70"><span class="linenos">70</span></a><span class="sd">        Args:</span>
-</span><span id="FHEAI.decrypt-71"><a href="#FHEAI.decrypt-71"><span class="linenos">71</span></a><span class="sd">            ciphertext: Ciphertext to decrypt.</span>
-</span><span id="FHEAI.decrypt-72"><a href="#FHEAI.decrypt-72"><span class="linenos">72</span></a><span class="sd">            length: Optional; length of original data.</span>
-</span><span id="FHEAI.decrypt-73"><a href="#FHEAI.decrypt-73"><span class="linenos">73</span></a>
-</span><span id="FHEAI.decrypt-74"><a href="#FHEAI.decrypt-74"><span class="linenos">74</span></a><span class="sd">        Returns:</span>
-</span><span id="FHEAI.decrypt-75"><a href="#FHEAI.decrypt-75"><span class="linenos">75</span></a><span class="sd">            np.ndarray: Decrypted data as a numpy array.</span>
-</span><span id="FHEAI.decrypt-76"><a href="#FHEAI.decrypt-76"><span class="linenos">76</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI.decrypt-77"><a href="#FHEAI.decrypt-77"><span class="linenos">77</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
-</span><span id="FHEAI.decrypt-78"><a href="#FHEAI.decrypt-78"><span class="linenos">78</span></a>        <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">GetRealPackedValue</span><span class="p">()</span>
-</span><span id="FHEAI.decrypt-79"><a href="#FHEAI.decrypt-79"><span class="linenos">79</span></a>
-</span><span id="FHEAI.decrypt-80"><a href="#FHEAI.decrypt-80"><span class="linenos">80</span></a>        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="FHEAI.decrypt-81"><a href="#FHEAI.decrypt-81"><span class="linenos">81</span></a>            <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">decrypted_data</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
-</span><span id="FHEAI.decrypt-82"><a href="#FHEAI.decrypt-82"><span class="linenos">82</span></a>
-</span><span id="FHEAI.decrypt-83"><a href="#FHEAI.decrypt-83"><span class="linenos">83</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">decrypted_data</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.decrypt-68"><a href="#FHEAI.decrypt-68"><span class="linenos">68</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="FHEAI.decrypt-69"><a href="#FHEAI.decrypt-69"><span class="linenos">69</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI.decrypt-70"><a href="#FHEAI.decrypt-70"><span class="linenos">70</span></a><span class="sd">        Decrypt a ciphertext to retrieve the original data.</span>
+</span><span id="FHEAI.decrypt-71"><a href="#FHEAI.decrypt-71"><span class="linenos">71</span></a>
+</span><span id="FHEAI.decrypt-72"><a href="#FHEAI.decrypt-72"><span class="linenos">72</span></a><span class="sd">        Args:</span>
+</span><span id="FHEAI.decrypt-73"><a href="#FHEAI.decrypt-73"><span class="linenos">73</span></a><span class="sd">            ciphertext: Ciphertext to decrypt.</span>
+</span><span id="FHEAI.decrypt-74"><a href="#FHEAI.decrypt-74"><span class="linenos">74</span></a><span class="sd">            length: Optional; length of original data.</span>
+</span><span id="FHEAI.decrypt-75"><a href="#FHEAI.decrypt-75"><span class="linenos">75</span></a>
+</span><span id="FHEAI.decrypt-76"><a href="#FHEAI.decrypt-76"><span class="linenos">76</span></a><span class="sd">        Returns:</span>
+</span><span id="FHEAI.decrypt-77"><a href="#FHEAI.decrypt-77"><span class="linenos">77</span></a><span class="sd">            np.ndarray: Decrypted data as a numpy array.</span>
+</span><span id="FHEAI.decrypt-78"><a href="#FHEAI.decrypt-78"><span class="linenos">78</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI.decrypt-79"><a href="#FHEAI.decrypt-79"><span class="linenos">79</span></a>        <span class="n">plaintext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">Decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_pair</span><span class="o">.</span><span class="n">secretKey</span><span class="p">)</span>
+</span><span id="FHEAI.decrypt-80"><a href="#FHEAI.decrypt-80"><span class="linenos">80</span></a>        <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">GetRealPackedValue</span><span class="p">()</span>
+</span><span id="FHEAI.decrypt-81"><a href="#FHEAI.decrypt-81"><span class="linenos">81</span></a>
+</span><span id="FHEAI.decrypt-82"><a href="#FHEAI.decrypt-82"><span class="linenos">82</span></a>        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FHEAI.decrypt-83"><a href="#FHEAI.decrypt-83"><span class="linenos">83</span></a>            <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">decrypted_data</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
+</span><span id="FHEAI.decrypt-84"><a href="#FHEAI.decrypt-84"><span class="linenos">84</span></a>
+</span><span id="FHEAI.decrypt-85"><a href="#FHEAI.decrypt-85"><span class="linenos">85</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">decrypted_data</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -443,11 +428,11 @@
 
     </div>
     <a class="headerlink" href="#FHEAI.add"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.add-85"><a href="#FHEAI.add-85"><span class="linenos">85</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
-</span><span id="FHEAI.add-86"><a href="#FHEAI.add-86"><span class="linenos">86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI.add-87"><a href="#FHEAI.add-87"><span class="linenos">87</span></a><span class="sd">        Homomorphically add two ciphertexts.</span>
-</span><span id="FHEAI.add-88"><a href="#FHEAI.add-88"><span class="linenos">88</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI.add-89"><a href="#FHEAI.add-89"><span class="linenos">89</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalAdd</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.add-87"><a href="#FHEAI.add-87"><span class="linenos">87</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI.add-88"><a href="#FHEAI.add-88"><span class="linenos">88</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI.add-89"><a href="#FHEAI.add-89"><span class="linenos">89</span></a><span class="sd">        Homomorphically add two ciphertexts.</span>
+</span><span id="FHEAI.add-90"><a href="#FHEAI.add-90"><span class="linenos">90</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI.add-91"><a href="#FHEAI.add-91"><span class="linenos">91</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalAdd</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -467,11 +452,11 @@
 
     </div>
     <a class="headerlink" href="#FHEAI.multiply"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.multiply-91"><a href="#FHEAI.multiply-91"><span class="linenos">91</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
-</span><span id="FHEAI.multiply-92"><a href="#FHEAI.multiply-92"><span class="linenos">92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FHEAI.multiply-93"><a href="#FHEAI.multiply-93"><span class="linenos">93</span></a><span class="sd">        Homomorphically multiply two ciphertexts.</span>
-</span><span id="FHEAI.multiply-94"><a href="#FHEAI.multiply-94"><span class="linenos">94</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FHEAI.multiply-95"><a href="#FHEAI.multiply-95"><span class="linenos">95</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.multiply-93"><a href="#FHEAI.multiply-93"><span class="linenos">93</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI.multiply-94"><a href="#FHEAI.multiply-94"><span class="linenos">94</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI.multiply-95"><a href="#FHEAI.multiply-95"><span class="linenos">95</span></a><span class="sd">        Homomorphically multiply two ciphertexts.</span>
+</span><span id="FHEAI.multiply-96"><a href="#FHEAI.multiply-96"><span class="linenos">96</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI.multiply-97"><a href="#FHEAI.multiply-97"><span class="linenos">97</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -479,6 +464,16 @@
 </div>
 
 
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="fheai_bootstrap.html#BootstrapMixin">fhe_ai_inference.fheai_bootstrap.BootstrapMixin</a></dt>
+                                <dd id="FHEAI.setup_bootstrap" class="function"><a href="fheai_bootstrap.html#BootstrapMixin.setup_bootstrap">setup_bootstrap</a></dd>
+                <dd id="FHEAI.bootstrap" class="function"><a href="fheai_bootstrap.html#BootstrapMixin.bootstrap">bootstrap</a></dd>
+
+            </div>
+                                </dl>
                             </div>
                 </section>
     </main>
