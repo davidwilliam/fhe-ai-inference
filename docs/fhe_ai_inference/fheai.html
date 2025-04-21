@@ -48,6 +48,12 @@
                         <li>
                                 <a class="function" href="#FHEAI.decrypt">decrypt</a>
                         </li>
+                        <li>
+                                <a class="function" href="#FHEAI.add">add</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#FHEAI.multiply">multiply</a>
+                        </li>
                 </ul>
 
             </li>
@@ -154,6 +160,18 @@
 </span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>            <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">decrypted_data</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>
 </span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">decrypted_data</span><span class="p">)</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a><span class="sd">        Homomorphically add two ciphertexts.</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalAdd</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>
+</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a><span class="sd">        Homomorphically multiply two ciphertexts.</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -237,6 +255,18 @@
 </span><span id="FHEAI-81"><a href="#FHEAI-81"><span class="linenos">81</span></a>            <span class="n">decrypted_data</span> <span class="o">=</span> <span class="n">decrypted_data</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
 </span><span id="FHEAI-82"><a href="#FHEAI-82"><span class="linenos">82</span></a>
 </span><span id="FHEAI-83"><a href="#FHEAI-83"><span class="linenos">83</span></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">decrypted_data</span><span class="p">)</span>
+</span><span id="FHEAI-84"><a href="#FHEAI-84"><span class="linenos">84</span></a>
+</span><span id="FHEAI-85"><a href="#FHEAI-85"><span class="linenos">85</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI-86"><a href="#FHEAI-86"><span class="linenos">86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI-87"><a href="#FHEAI-87"><span class="linenos">87</span></a><span class="sd">        Homomorphically add two ciphertexts.</span>
+</span><span id="FHEAI-88"><a href="#FHEAI-88"><span class="linenos">88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI-89"><a href="#FHEAI-89"><span class="linenos">89</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalAdd</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+</span><span id="FHEAI-90"><a href="#FHEAI-90"><span class="linenos">90</span></a>
+</span><span id="FHEAI-91"><a href="#FHEAI-91"><span class="linenos">91</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI-92"><a href="#FHEAI-92"><span class="linenos">92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI-93"><a href="#FHEAI-93"><span class="linenos">93</span></a><span class="sd">        Homomorphically multiply two ciphertexts.</span>
+</span><span id="FHEAI-94"><a href="#FHEAI-94"><span class="linenos">94</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI-95"><a href="#FHEAI-95"><span class="linenos">95</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -398,6 +428,54 @@
 
 <p>Returns:
     np.ndarray: Decrypted data as a numpy array.</p>
+</div>
+
+
+                            </div>
+                            <div id="FHEAI.add" class="classattr">
+                                        <input id="FHEAI.add-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+
+        <span class="def">def</span>
+        <span class="name">add</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">ciphertext1</span><span class="p">:</span> <span class="n">openfhe</span><span class="o">.</span><span class="n">openfhe</span><span class="o">.</span><span class="n">Ciphertext</span>,</span><span class="param">	<span class="n">ciphertext2</span><span class="p">:</span> <span class="n">openfhe</span><span class="o">.</span><span class="n">openfhe</span><span class="o">.</span><span class="n">Ciphertext</span></span><span class="return-annotation">) -> <span class="n">openfhe</span><span class="o">.</span><span class="n">openfhe</span><span class="o">.</span><span class="n">Ciphertext</span>:</span></span>
+
+                <label class="view-source-button" for="FHEAI.add-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FHEAI.add"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.add-85"><a href="#FHEAI.add-85"><span class="linenos">85</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI.add-86"><a href="#FHEAI.add-86"><span class="linenos">86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI.add-87"><a href="#FHEAI.add-87"><span class="linenos">87</span></a><span class="sd">        Homomorphically add two ciphertexts.</span>
+</span><span id="FHEAI.add-88"><a href="#FHEAI.add-88"><span class="linenos">88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI.add-89"><a href="#FHEAI.add-89"><span class="linenos">89</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalAdd</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Homomorphically add two ciphertexts.</p>
+</div>
+
+
+                            </div>
+                            <div id="FHEAI.multiply" class="classattr">
+                                        <input id="FHEAI.multiply-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+
+        <span class="def">def</span>
+        <span class="name">multiply</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">ciphertext1</span><span class="p">:</span> <span class="n">openfhe</span><span class="o">.</span><span class="n">openfhe</span><span class="o">.</span><span class="n">Ciphertext</span>,</span><span class="param">	<span class="n">ciphertext2</span><span class="p">:</span> <span class="n">openfhe</span><span class="o">.</span><span class="n">openfhe</span><span class="o">.</span><span class="n">Ciphertext</span></span><span class="return-annotation">) -> <span class="n">openfhe</span><span class="o">.</span><span class="n">openfhe</span><span class="o">.</span><span class="n">Ciphertext</span>:</span></span>
+
+                <label class="view-source-button" for="FHEAI.multiply-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FHEAI.multiply"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FHEAI.multiply-91"><a href="#FHEAI.multiply-91"><span class="linenos">91</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext1</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">:</span> <span class="n">Ciphertext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ciphertext</span><span class="p">:</span>
+</span><span id="FHEAI.multiply-92"><a href="#FHEAI.multiply-92"><span class="linenos">92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FHEAI.multiply-93"><a href="#FHEAI.multiply-93"><span class="linenos">93</span></a><span class="sd">        Homomorphically multiply two ciphertexts.</span>
+</span><span id="FHEAI.multiply-94"><a href="#FHEAI.multiply-94"><span class="linenos">94</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FHEAI.multiply-95"><a href="#FHEAI.multiply-95"><span class="linenos">95</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypto_context</span><span class="o">.</span><span class="n">EvalMult</span><span class="p">(</span><span class="n">ciphertext1</span><span class="p">,</span> <span class="n">ciphertext2</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Homomorphically multiply two ciphertexts.</p>
 </div>
 
 

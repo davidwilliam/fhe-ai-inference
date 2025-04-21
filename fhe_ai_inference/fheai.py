@@ -80,3 +80,15 @@ class FHEAI:
             decrypted_data = decrypted_data[:length]
 
         return np.array(decrypted_data)
+
+    def add(self, ciphertext1: Ciphertext, ciphertext2: Ciphertext) -> Ciphertext:
+        """
+        Homomorphically add two ciphertexts.
+        """
+        return self.crypto_context.EvalAdd(ciphertext1, ciphertext2)
+
+    def multiply(self, ciphertext1: Ciphertext, ciphertext2: Ciphertext) -> Ciphertext:
+        """
+        Homomorphically multiply two ciphertexts.
+        """
+        return self.crypto_context.EvalMult(ciphertext1, ciphertext2)

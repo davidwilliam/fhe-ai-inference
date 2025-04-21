@@ -45,3 +45,33 @@ def test_invalid_input(fheai):
         ValueError, match="Input must be a float, list of floats, or numpy array"
     ):
         fheai.encrypt("invalid")
+
+
+def test_homomorphic_addition(fheai):
+    original1 = np.array([1.0, 2.0, 3.0])
+    original2 = np.array([4.0, 5.0, 6.0])
+
+    ciphertext1 = fheai.encrypt(original1)
+    ciphertext2 = fheai.encrypt(original2)
+
+    result_ciphertext = fheai.add(ciphertext1, ciphertext2)
+    decrypted_result = fheai.decrypt(result_ciphertext, length=original1.size)
+
+    assert np.allclose(
+        decrypted_result, original1 + original2, atol=1e-5
+    ), "Homomorphic addition failed"
+
+
+def test_homomorphic_multiplication(fheai):
+    original1 = np.array([2.0, 3.0, 4.0])
+    original2 = np.array([5.0, 6.0, 7.0])
+
+    ciphertext1 = fheai.encrypt(original1)
+    ciphertext2 = fheai.encrypt(original2)
+
+    result_ciphertext = fheai.multiply(ciphertext1, ciphertext2)
+    decrypted_result = fheai.decrypt(result_ciphertext, length=original1.size)
+
+    assert np.allclose(
+        decrypted_result, original1 * original2, atol=1e-3
+    ), "Homomorphic multiplication failed"
