@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from functools import reduce
 from typing import Optional
 
@@ -32,19 +33,22 @@ class FHELinear:
         self.in_features, self.out_features = self.weights.shape
 
     def forward(
-        self, inputs: list[Ciphertext], crypto_context, public_key
-    ) -> list[Ciphertext]:
+        self,
+        inputs: list[Ciphertext] | list[list[Ciphertext]],
+        crypto_context,
+        public_key,
+    ) -> list[Ciphertext] | list[list[Ciphertext]]:
         """
-        Compute y = Wx + b on encrypted inputs.
-
-        Args:
-            inputs (list[Ciphertext]): Encrypted input vector (length = in_features)
-            crypto_context: OpenFHE CryptoContext
-            public_key: OpenFHE public key (for encrypting bias if needed)
-
-        Returns:
-            list[Ciphertext]: Encrypted output vector
+        If inputs is a single vector → compute W*x + b
+        If inputs is a batch of vectors → apply W*x + b for each vector
         """
+        is_batch = isinstance(inputs[0], Sequence) and not isinstance(
+            inputs[0], Ciphertext
+        )
+
+        if is_batch:
+            return [self.forward(vec, crypto_context, public_key) for vec in inputs]
+
         if len(inputs) != self.in_features:
             raise ValueError(f"Expected {self.in_features} inputs, got {len(inputs)}")
 
@@ -54,7 +58,6 @@ class FHELinear:
                 crypto_context.EvalMult(inputs[j], self.weights[j, i])
                 for j in range(self.in_features)
             ]
-            # Replace EvalAddMany with reduce + EvalAdd
             summed = reduce(lambda x, y: crypto_context.EvalAdd(x, y), weighted)
 
             if self.bias is not None:
