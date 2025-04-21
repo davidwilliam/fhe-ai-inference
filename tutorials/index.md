@@ -7,6 +7,9 @@ Welcome to the FHE AI Inference tutorials. Here you will find practical, well-st
 - [Getting Started with OpenFHE (CKKS)](./getting_started_with_openfhe.md)
   Learn how to set up OpenFHE, create encryption keys, encrypt/decrypt data, and apply basic homomorphic operations like addition and multiplication using the CKKS scheme.
 
+- [Security and Parameter Selection in CKKS](./security_and_parameters.md)
+  Understand the core parameters of CKKS (depth, scale, ring dimension), how they affect security, precision, and performance, and how to select the right configuration for your workload.
+
 ## Coming Soon
 
 - Secure Linear Models with FHE
