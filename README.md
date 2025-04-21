@@ -66,6 +66,51 @@ python tutorials/getting_started_with_openfhe.py
 
 You should see a successful encryption, decryption, and homomorphic operations demonstration.
 
+### A Truly Pythonic API for FHE
+
+Instead of binding developers to verbose C++ cryptographic idioms, this library offers a **natural, Pythonic interface** to FHE operations.
+
+All homomorphic encryption, decryption, and evaluation logic is cleanly exposed:
+
+```python
+from fhe_ai_inference.fheai import FHEAI
+
+# Step 1: Create a homomorphic context
+fhe = FHEAI(mult_depth=3, scale_mod_size=50)
+
+# Step 2: Encrypt data
+enc_x = fhe.encrypt([1.0, 2.0, 3.0])
+enc_y = fhe.encrypt([4.0, 5.0, 6.0])
+
+# Step 3: Compute homomorphically
+enc_sum = fhe.add(enc_x, enc_y)
+enc_prod = fhe.multiply(enc_x, enc_y)
+
+# Step 4: Decrypt result
+print(fhe.decrypt(enc_sum))    # [5.0, 7.0, 9.0]
+print(fhe.decrypt(enc_prod))   # [4.0, 10.0, 18.0]
+```
+
+Bootstrapping support is just as clean:
+
+```python
+from fhe_ai_inference.fheai_bootstrap import BootstrapMixin
+from fhe_ai_inference.params_bootstrap import build_bootstrappable_context
+
+class MyBootstrappableFHE(FHEAI, BootstrapMixin):
+    def __init__(self):
+        super().__init__(crypto_context=build_bootstrappable_context())
+
+fhe = MyBootstrappableFHE()
+fhe.setup_bootstrap()
+
+enc = fhe.encrypt([3.14])
+refreshed = fhe.bootstrap(enc)
+print(fhe.decrypt(refreshed))  # [3.14...] — ciphertext refreshed
+```
+
+All features work out of the box via `make install`.
+
 ## Tutorials & Documentation
 
 - [Tutorials Index](tutorials/index.md): Practical guides covering key aspects of OpenFHE usage.
