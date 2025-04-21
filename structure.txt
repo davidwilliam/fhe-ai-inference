@@ -1,6 +1,7 @@
 .
 ├── CONTRIBUTING.md
 ├── LICENSE
+├── Makefile
 ├── README.md
 ├── ROADMAP.md
 ├── docs
@@ -21,37 +22,20 @@
 │   └── secure_inference_mlp.py
 ├── fhe_ai_inference
 │   ├── __init__.py
-│   ├── activations.py
-│   ├── ckks.py
-│   ├── core.py
-│   ├── encoder.py
-│   ├── fhe.py
-│   ├── layers
-│   │   ├── __init__.py
-│   │   └── linear.py
-│   ├── model.py
-│   ├── openfhe_ckks.py
-│   └── utils.py
+│   └── fheai.py
 ├── pyproject.toml
+├── pytest.log
+├── requirements.txt
 ├── scripts
 │   └── test_openfhe_init.py
 ├── structure.txt
 ├── tests
 │   ├── __init__.py
-│   ├── test_activation.py
-│   ├── test_ckks.py
-│   ├── test_core.py
-│   ├── test_encoder.py
-│   ├── test_fhe.py
-│   ├── test_fhe_inference.py
-│   ├── test_fhelinear.py
-│   ├── test_fhelinear_standalone.py
-│   ├── test_homomorphic_linear_inference.py
-│   └── test_model.py
+│   └── test_fheai.py
 └── tutorials
     ├── fhelinear_tutorial.py
     ├── getting_started_with_openfhe.md
     ├── getting_started_with_openfhe.py
     └── index.md
 
-9 directories, 46 files
+8 directories, 31 files

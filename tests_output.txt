@@ -1,0 +1,460 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.3, pytest-8.3.5, pluggy-1.5.0 -- /Users/davidwilliamsilva/Library/Application Support/hatch/env/virtual/fhe-ai-inference/k4HkGpvJ/fhe-ai-inference/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/davidwilliamsilva/workspace_python/fhe-ai-inference
+configfile: pyproject.toml
+plugins: anyio-4.9.0, cov-6.1.1
+collecting ... collected 5 items
+
+tests/test_fheai.py::test_encrypt_decrypt_scalar FAILED                  [ 20%]
+tests/test_fheai.py::test_encrypt_decrypt_list FAILED                    [ 40%]
+tests/test_fheai.py::test_encrypt_decrypt_numpy_array FAILED             [ 60%]
+tests/test_fheai.py::test_invalid_input PASSED                           [ 80%]
+tests/test_fheai.py::test_decrypt_precision FAILED                       [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_encrypt_decrypt_scalar __________________________
+
+fheai = <fhe_ai_inference.fheai.FHEAI object at 0x105743380>
+
+    def test_encrypt_decrypt_scalar(fheai):
+        """Test encryption and decryption of a single float."""
+        original = 3.14
+        ciphertext = fheai.encrypt(original)
+        decrypted = fheai.decrypt(ciphertext)
+>       assert np.allclose(decrypted, [original], atol=1e-5), "Scalar decryption failed"
+E       AssertionError: Scalar decryption failed
+E       assert False
+E        +  where False = <function allclose at 0x1056c4570>(array([3.14000000e+00, 9.28168443e-13, 3.48439036e-13, ...,\n       5.25322342e-13, 2.62011040e-12, 2.65486676e-13], shape=(8192,)), [3.14], atol=1e-05)
+E        +    where <function allclose at 0x1056c4570> = np.allclose
+
+tests/test_fheai.py:16: AssertionError
+__________________________ test_encrypt_decrypt_list ___________________________
+
+fheai = <fhe_ai_inference.fheai.FHEAI object at 0x10582efd0>
+
+    def test_encrypt_decrypt_list(fheai):
+        """Test encryption and decryption of a list of floats."""
+        original = [1.0, 2.0, 3.0]
+        ciphertext = fheai.encrypt(original)
+        decrypted = fheai.decrypt(ciphertext)
+>       assert np.allclose(decrypted, original, atol=1e-5), "List decryption failed"
+
+tests/test_fheai.py:23:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+../../Library/Application Support/hatch/env/virtual/fhe-ai-inference/k4HkGpvJ/fhe-ai-inference/lib/python3.13/site-packages/numpy/_core/numeric.py:2329: in allclose
+    res = all(isclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = array([ 1.00000000e+00,  2.00000000e+00,  3.00000000e+00, ...,
+        3.99400280e-13, -2.82070629e-12,  5.40307894e-13], shape=(8192,))
+b = [1.0, 2.0, 3.0], rtol = 1e-05, atol = 1e-05, equal_nan = False
+
+    @array_function_dispatch(_isclose_dispatcher)
+    def isclose(a, b, rtol=1.e-5, atol=1.e-8, equal_nan=False):
+        """
+        Returns a boolean array where two arrays are element-wise equal within a
+        tolerance.
+
+        The tolerance values are positive, typically very small numbers.  The
+        relative difference (`rtol` * abs(`b`)) and the absolute difference
+        `atol` are added together to compare against the absolute difference
+        between `a` and `b`.
+
+        .. warning:: The default `atol` is not appropriate for comparing numbers
+                     with magnitudes much smaller than one (see Notes).
+
+        Parameters
+        ----------
+        a, b : array_like
+            Input arrays to compare.
+        rtol : array_like
+            The relative tolerance parameter (see Notes).
+        atol : array_like
+            The absolute tolerance parameter (see Notes).
+        equal_nan : bool
+            Whether to compare NaN's as equal.  If True, NaN's in `a` will be
+            considered equal to NaN's in `b` in the output array.
+
+        Returns
+        -------
+        y : array_like
+            Returns a boolean array of where `a` and `b` are equal within the
+            given tolerance. If both `a` and `b` are scalars, returns a single
+            boolean value.
+
+        See Also
+        --------
+        allclose
+        math.isclose
+
+        Notes
+        -----
+        For finite values, isclose uses the following equation to test whether
+        two floating point values are equivalent.::
+
+         absolute(a - b) <= (atol + rtol * absolute(b))
+
+        Unlike the built-in `math.isclose`, the above equation is not symmetric
+        in `a` and `b` -- it assumes `b` is the reference value -- so that
+        `isclose(a, b)` might be different from `isclose(b, a)`.
+
+        The default value of `atol` is not appropriate when the reference value
+        `b` has magnitude smaller than one. For example, it is unlikely that
+        ``a = 1e-9`` and ``b = 2e-9`` should be considered "close", yet
+        ``isclose(1e-9, 2e-9)`` is ``True`` with default settings. Be sure
+        to select `atol` for the use case at hand, especially for defining the
+        threshold below which a non-zero value in `a` will be considered "close"
+        to a very small or zero value in `b`.
+
+        `isclose` is not defined for non-numeric data types.
+        :class:`bool` is considered a numeric data-type for this purpose.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> np.isclose([1e10,1e-7], [1.00001e10,1e-8])
+        array([ True, False])
+
+        >>> np.isclose([1e10,1e-8], [1.00001e10,1e-9])
+        array([ True, True])
+
+        >>> np.isclose([1e10,1e-8], [1.0001e10,1e-9])
+        array([False,  True])
+
+        >>> np.isclose([1.0, np.nan], [1.0, np.nan])
+        array([ True, False])
+
+        >>> np.isclose([1.0, np.nan], [1.0, np.nan], equal_nan=True)
+        array([ True, True])
+
+        >>> np.isclose([1e-8, 1e-7], [0.0, 0.0])
+        array([ True, False])
+
+        >>> np.isclose([1e-100, 1e-7], [0.0, 0.0], atol=0.0)
+        array([False, False])
+
+        >>> np.isclose([1e-10, 1e-10], [1e-20, 0.0])
+        array([ True,  True])
+
+        >>> np.isclose([1e-10, 1e-10], [1e-20, 0.999999e-10], atol=0.0)
+        array([False,  True])
+
+        """
+        # Turn all but python scalars into arrays.
+        x, y, atol, rtol = (
+            a if isinstance(a, (int, float, complex)) else asanyarray(a)
+            for a in (a, b, atol, rtol))
+
+        # Make sure y is an inexact type to avoid bad behavior on abs(MIN_INT).
+        # This will cause casting of x later. Also, make sure to allow subclasses
+        # (e.g., for numpy.ma).
+        # NOTE: We explicitly allow timedelta, which used to work. This could
+        #       possibly be deprecated. See also gh-18286.
+        #       timedelta works if `atol` is an integer or also a timedelta.
+        #       Although, the default tolerances are unlikely to be useful
+        if (dtype := getattr(y, "dtype", None)) is not None and dtype.kind != "m":
+            dt = multiarray.result_type(y, 1.)
+            y = asanyarray(y, dtype=dt)
+        elif isinstance(y, int):
+            y = float(y)
+
+        with errstate(invalid='ignore'):
+>           result = (less_equal(abs(x-y), atol + rtol * abs(y))
+                      & isfinite(y)
+                      | (x == y))
+E           ValueError: operands could not be broadcast together with shapes (8192,) (3,)
+
+../../Library/Application Support/hatch/env/virtual/fhe-ai-inference/k4HkGpvJ/fhe-ai-inference/lib/python3.13/site-packages/numpy/_core/numeric.py:2447: ValueError
+_______________________ test_encrypt_decrypt_numpy_array _______________________
+
+fheai = <fhe_ai_inference.fheai.FHEAI object at 0x10582f750>
+
+    def test_encrypt_decrypt_numpy_array(fheai):
+        """Test encryption and decryption of a numpy array."""
+        original = np.array([0.5, 1.5, 2.5])
+        ciphertext = fheai.encrypt(original)
+        decrypted = fheai.decrypt(ciphertext)
+>       assert np.allclose(decrypted, original, atol=1e-5), "Numpy array decryption failed"
+
+tests/test_fheai.py:30:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+../../Library/Application Support/hatch/env/virtual/fhe-ai-inference/k4HkGpvJ/fhe-ai-inference/lib/python3.13/site-packages/numpy/_core/numeric.py:2329: in allclose
+    res = all(isclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = array([5.00000000e-01, 1.50000000e+00, 2.50000000e+00, ...,
+       8.31153141e-13, 1.13915259e-12, 1.67668292e-12], shape=(8192,))
+b = array([0.5, 1.5, 2.5]), rtol = 1e-05, atol = 1e-05, equal_nan = False
+
+    @array_function_dispatch(_isclose_dispatcher)
+    def isclose(a, b, rtol=1.e-5, atol=1.e-8, equal_nan=False):
+        """
+        Returns a boolean array where two arrays are element-wise equal within a
+        tolerance.
+
+        The tolerance values are positive, typically very small numbers.  The
+        relative difference (`rtol` * abs(`b`)) and the absolute difference
+        `atol` are added together to compare against the absolute difference
+        between `a` and `b`.
+
+        .. warning:: The default `atol` is not appropriate for comparing numbers
+                     with magnitudes much smaller than one (see Notes).
+
+        Parameters
+        ----------
+        a, b : array_like
+            Input arrays to compare.
+        rtol : array_like
+            The relative tolerance parameter (see Notes).
+        atol : array_like
+            The absolute tolerance parameter (see Notes).
+        equal_nan : bool
+            Whether to compare NaN's as equal.  If True, NaN's in `a` will be
+            considered equal to NaN's in `b` in the output array.
+
+        Returns
+        -------
+        y : array_like
+            Returns a boolean array of where `a` and `b` are equal within the
+            given tolerance. If both `a` and `b` are scalars, returns a single
+            boolean value.
+
+        See Also
+        --------
+        allclose
+        math.isclose
+
+        Notes
+        -----
+        For finite values, isclose uses the following equation to test whether
+        two floating point values are equivalent.::
+
+         absolute(a - b) <= (atol + rtol * absolute(b))
+
+        Unlike the built-in `math.isclose`, the above equation is not symmetric
+        in `a` and `b` -- it assumes `b` is the reference value -- so that
+        `isclose(a, b)` might be different from `isclose(b, a)`.
+
+        The default value of `atol` is not appropriate when the reference value
+        `b` has magnitude smaller than one. For example, it is unlikely that
+        ``a = 1e-9`` and ``b = 2e-9`` should be considered "close", yet
+        ``isclose(1e-9, 2e-9)`` is ``True`` with default settings. Be sure
+        to select `atol` for the use case at hand, especially for defining the
+        threshold below which a non-zero value in `a` will be considered "close"
+        to a very small or zero value in `b`.
+
+        `isclose` is not defined for non-numeric data types.
+        :class:`bool` is considered a numeric data-type for this purpose.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> np.isclose([1e10,1e-7], [1.00001e10,1e-8])
+        array([ True, False])
+
+        >>> np.isclose([1e10,1e-8], [1.00001e10,1e-9])
+        array([ True, True])
+
+        >>> np.isclose([1e10,1e-8], [1.0001e10,1e-9])
+        array([False,  True])
+
+        >>> np.isclose([1.0, np.nan], [1.0, np.nan])
+        array([ True, False])
+
+        >>> np.isclose([1.0, np.nan], [1.0, np.nan], equal_nan=True)
+        array([ True, True])
+
+        >>> np.isclose([1e-8, 1e-7], [0.0, 0.0])
+        array([ True, False])
+
+        >>> np.isclose([1e-100, 1e-7], [0.0, 0.0], atol=0.0)
+        array([False, False])
+
+        >>> np.isclose([1e-10, 1e-10], [1e-20, 0.0])
+        array([ True,  True])
+
+        >>> np.isclose([1e-10, 1e-10], [1e-20, 0.999999e-10], atol=0.0)
+        array([False,  True])
+
+        """
+        # Turn all but python scalars into arrays.
+        x, y, atol, rtol = (
+            a if isinstance(a, (int, float, complex)) else asanyarray(a)
+            for a in (a, b, atol, rtol))
+
+        # Make sure y is an inexact type to avoid bad behavior on abs(MIN_INT).
+        # This will cause casting of x later. Also, make sure to allow subclasses
+        # (e.g., for numpy.ma).
+        # NOTE: We explicitly allow timedelta, which used to work. This could
+        #       possibly be deprecated. See also gh-18286.
+        #       timedelta works if `atol` is an integer or also a timedelta.
+        #       Although, the default tolerances are unlikely to be useful
+        if (dtype := getattr(y, "dtype", None)) is not None and dtype.kind != "m":
+            dt = multiarray.result_type(y, 1.)
+            y = asanyarray(y, dtype=dt)
+        elif isinstance(y, int):
+            y = float(y)
+
+        with errstate(invalid='ignore'):
+>           result = (less_equal(abs(x-y), atol + rtol * abs(y))
+                      & isfinite(y)
+                      | (x == y))
+E           ValueError: operands could not be broadcast together with shapes (8192,) (3,)
+
+../../Library/Application Support/hatch/env/virtual/fhe-ai-inference/k4HkGpvJ/fhe-ai-inference/lib/python3.13/site-packages/numpy/_core/numeric.py:2447: ValueError
+____________________________ test_decrypt_precision ____________________________
+
+fheai = <fhe_ai_inference.fheai.FHEAI object at 0x105ea0050>
+
+    def test_decrypt_precision(fheai):
+        """Test decryption precision for a larger input."""
+        original = np.random.uniform(-10, 10, 10)  # Random array of 10 floats
+        ciphertext = fheai.encrypt(original)
+        decrypted = fheai.decrypt(ciphertext)
+>       assert np.allclose(decrypted, original, atol=1e-5), "Precision test failed"
+
+tests/test_fheai.py:42:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+../../Library/Application Support/hatch/env/virtual/fhe-ai-inference/k4HkGpvJ/fhe-ai-inference/lib/python3.13/site-packages/numpy/_core/numeric.py:2329: in allclose
+    res = all(isclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+a = array([-6.91210622e+00, -1.44734204e+00, -2.39749332e+00, ...,
+       -1.20320180e-13, -9.98347758e-13, -3.26842500e-12], shape=(8192,))
+b = array([-6.91210622, -1.44734204, -2.39749332, -1.4326185 ,  2.31900383,
+        9.22228887,  1.16868881, -4.20976976,  4.43234362,  4.48033029])
+rtol = 1e-05, atol = 1e-05, equal_nan = False
+
+    @array_function_dispatch(_isclose_dispatcher)
+    def isclose(a, b, rtol=1.e-5, atol=1.e-8, equal_nan=False):
+        """
+        Returns a boolean array where two arrays are element-wise equal within a
+        tolerance.
+
+        The tolerance values are positive, typically very small numbers.  The
+        relative difference (`rtol` * abs(`b`)) and the absolute difference
+        `atol` are added together to compare against the absolute difference
+        between `a` and `b`.
+
+        .. warning:: The default `atol` is not appropriate for comparing numbers
+                     with magnitudes much smaller than one (see Notes).
+
+        Parameters
+        ----------
+        a, b : array_like
+            Input arrays to compare.
+        rtol : array_like
+            The relative tolerance parameter (see Notes).
+        atol : array_like
+            The absolute tolerance parameter (see Notes).
+        equal_nan : bool
+            Whether to compare NaN's as equal.  If True, NaN's in `a` will be
+            considered equal to NaN's in `b` in the output array.
+
+        Returns
+        -------
+        y : array_like
+            Returns a boolean array of where `a` and `b` are equal within the
+            given tolerance. If both `a` and `b` are scalars, returns a single
+            boolean value.
+
+        See Also
+        --------
+        allclose
+        math.isclose
+
+        Notes
+        -----
+        For finite values, isclose uses the following equation to test whether
+        two floating point values are equivalent.::
+
+         absolute(a - b) <= (atol + rtol * absolute(b))
+
+        Unlike the built-in `math.isclose`, the above equation is not symmetric
+        in `a` and `b` -- it assumes `b` is the reference value -- so that
+        `isclose(a, b)` might be different from `isclose(b, a)`.
+
+        The default value of `atol` is not appropriate when the reference value
+        `b` has magnitude smaller than one. For example, it is unlikely that
+        ``a = 1e-9`` and ``b = 2e-9`` should be considered "close", yet
+        ``isclose(1e-9, 2e-9)`` is ``True`` with default settings. Be sure
+        to select `atol` for the use case at hand, especially for defining the
+        threshold below which a non-zero value in `a` will be considered "close"
+        to a very small or zero value in `b`.
+
+        `isclose` is not defined for non-numeric data types.
+        :class:`bool` is considered a numeric data-type for this purpose.
+
+        Examples
+        --------
+        >>> import numpy as np
+        >>> np.isclose([1e10,1e-7], [1.00001e10,1e-8])
+        array([ True, False])
+
+        >>> np.isclose([1e10,1e-8], [1.00001e10,1e-9])
+        array([ True, True])
+
+        >>> np.isclose([1e10,1e-8], [1.0001e10,1e-9])
+        array([False,  True])
+
+        >>> np.isclose([1.0, np.nan], [1.0, np.nan])
+        array([ True, False])
+
+        >>> np.isclose([1.0, np.nan], [1.0, np.nan], equal_nan=True)
+        array([ True, True])
+
+        >>> np.isclose([1e-8, 1e-7], [0.0, 0.0])
+        array([ True, False])
+
+        >>> np.isclose([1e-100, 1e-7], [0.0, 0.0], atol=0.0)
+        array([False, False])
+
+        >>> np.isclose([1e-10, 1e-10], [1e-20, 0.0])
+        array([ True,  True])
+
+        >>> np.isclose([1e-10, 1e-10], [1e-20, 0.999999e-10], atol=0.0)
+        array([False,  True])
+
+        """
+        # Turn all but python scalars into arrays.
+        x, y, atol, rtol = (
+            a if isinstance(a, (int, float, complex)) else asanyarray(a)
+            for a in (a, b, atol, rtol))
+
+        # Make sure y is an inexact type to avoid bad behavior on abs(MIN_INT).
+        # This will cause casting of x later. Also, make sure to allow subclasses
+        # (e.g., for numpy.ma).
+        # NOTE: We explicitly allow timedelta, which used to work. This could
+        #       possibly be deprecated. See also gh-18286.
+        #       timedelta works if `atol` is an integer or also a timedelta.
+        #       Although, the default tolerances are unlikely to be useful
+        if (dtype := getattr(y, "dtype", None)) is not None and dtype.kind != "m":
+            dt = multiarray.result_type(y, 1.)
+            y = asanyarray(y, dtype=dt)
+        elif isinstance(y, int):
+            y = float(y)
+
+        with errstate(invalid='ignore'):
+>           result = (less_equal(abs(x-y), atol + rtol * abs(y))
+                      & isfinite(y)
+                      | (x == y))
+E           ValueError: operands could not be broadcast together with shapes (8192,) (10,)
+
+../../Library/Application Support/hatch/env/virtual/fhe-ai-inference/k4HkGpvJ/fhe-ai-inference/lib/python3.13/site-packages/numpy/_core/numeric.py:2447: ValueError
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.13.3-final-0 _______________
+
+Name                           Stmts   Miss  Cover
+--------------------------------------------------
+fhe_ai_inference/__init__.py       0      0   100%
+fhe_ai_inference/fheai.py         26      0   100%
+--------------------------------------------------
+TOTAL                             26      0   100%
+Coverage HTML written to dir htmlcov
+=========================== short test summary info ============================
+FAILED tests/test_fheai.py::test_encrypt_decrypt_scalar - AssertionError: Sca...
+FAILED tests/test_fheai.py::test_encrypt_decrypt_list - ValueError: operands ...
+FAILED tests/test_fheai.py::test_encrypt_decrypt_numpy_array - ValueError: op...
+FAILED tests/test_fheai.py::test_decrypt_precision - ValueError: operands cou...
+========================= 4 failed, 1 passed in 0.41s ==========================
