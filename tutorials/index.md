@@ -10,6 +10,9 @@ Welcome to the FHE AI Inference tutorials. Here you will find practical, well-st
 - [Security and Parameter Selection in CKKS](./security_and_parameters.md)
   Understand the core parameters of CKKS (depth, scale, ring dimension), how they affect security, precision, and performance, and how to select the right configuration for your workload.
 
+- [Precision and Noise Budget in CKKS](./precision_and_noise.md)
+  Explore how noise accumulates during computation, how to measure drift, and how to balance precision and circuit depth when building encrypted workloads.
+
 ## Coming Soon
 
 - Secure Linear Models with FHE
