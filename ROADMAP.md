@@ -22,20 +22,11 @@ Our approach emphasizes **modularity**, **developer experience**, and **practica
 
 > 🔍 **Focus**: Enable core encrypted model operations like linear layers and forward passes.
 
-- [x] **Implement `FHELinear` module** (analog to `torch.nn.Linear`)
-  Scalar-based encrypted linear transformation with optional bias.
-
-- [x] **Support encrypted matrix-vector multiplication**
-  Uses homomorphic `EvalMult` + `EvalAdd` to compute dot products over encrypted inputs.
-
-- [x] **Encode and apply biases under encryption**
-  Bias terms are packed and encrypted to match ciphertext scale and level, enabling secure addition.
-
-- [x] **Add bootstrapping support**
-  Bootstrapping is integrated via a mixin and triggered adaptively when noise budget is exhausted.
-
-- [x] **Fix precision issues and pass forward tests**
-  Encrypted linear forward passes now produce results within ±0.01 of expected plaintext values.
+- [x] **Implement `FHELinear` module** (analog to `torch.nn.Linear`: Scalar-based encrypted linear transformation with optional bias.
+- [x] **Support encrypted matrix-vector multiplication**: Uses homomorphic `EvalMult` + `EvalAdd` to compute dot products over encrypted inputs.
+- [x] **Encode and apply biases under encryption**: Bias terms are packed and encrypted to match ciphertext scale and level, enabling secure addition.
+- [x] **Add bootstrapping support**: Bootstrapping is integrated via a mixin and triggered adaptively when noise budget is exhausted.
+- [x] **Fix precision issues and pass forward tests**: Encrypted linear forward passes now produce results within ±0.01 of expected plaintext values.
 
 ### In Progress / Next
 
@@ -78,7 +69,6 @@ Our approach emphasizes **modularity**, **developer experience**, and **practica
 - [x] Expose `bootstrap()` and `setup_bootstrap()` in a clean API
 - [x] Add `params_bootstrap.py` with a working config for OpenFHE
 - [x] Provide working bootstrapping demo script
-- [ ] Refactor `BootstrapMixin` to support iterative bootstrapping
 - [ ] Enable automatic bootstrapping within long inference chains
 - [ ] Profile and optimize depth, scale, and rotation cost
 
