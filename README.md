@@ -144,8 +144,6 @@ result = fhe.decrypt(cipher)
 
 See [`scripts/bootstrap_demo.py`](scripts/bootstrap_demo.py) for a working example that computes `x^16` homomorphically.
 
-> ⚠️ **Known Issue**: Due to limitations in the OpenFHE Python bindings on macOS, bootstrapping may cause segmentation faults under some test runners. Related tests are skipped by default on this platform.
-
 ### Generate and view documentation
 
 ```bash
