@@ -105,9 +105,10 @@ def test_model_runner_call_directly_triggers_run():
         @property
         def key_pair(self):
             class DummyKey:
-                @property
-                def public_key(self):
-                    return None
+                def __getattr__(self, name):
+                    if name == "publicKey":
+                        return None
+                    raise AttributeError(f"{name} not found")
 
             return DummyKey()
 
