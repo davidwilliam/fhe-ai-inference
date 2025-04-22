@@ -31,31 +31,51 @@ Check the [Roadmap](ROADMAP.md) for upcoming milestones.
 
 ### Setup Your Environment
 
-Just one command sets up your entire environment (macOS/Linux):
+One command to install everything (macOS / Linux):
 
 ```bash
 make install
 ```
 
-This command automatically installs all prerequisites, compiles OpenFHE, configures Python bindings, and sets up your Python virtual environment.
+After the installation runs, you should see:
 
-If for some reason you need to run the install command again, just do:
+```
+✅ OpenFHE context successfully initialized with CKKS.
+```
+
+This process installs Homebrew dependencies, builds & installs the OpenFHE C++ core, installs the Python bindings from source, and appends the proper `DYLD_LIBRARY_PATH` export into your `~/.zshrc`.
+
+**Reload your shell** so the new library path is picked up:
+
+```bash
+source ~/.zshrc
+```
+
+To rebuild from scratch:
 
 ```bash
 make clean
 make install
 ```
 
-After installing, to test everything is working as intended, run:
+#### Verify your setup
 
-```
+**Quick smoke test:**
+
+```bash
 python scripts/test_openfhe_init.py
 ```
 
-You should see the following result:
+You should see:
 
 ```
 ✅ OpenFHE context successfully initialized with CKKS.
+```
+
+**Full test suite & coverage** (via Hatch):
+
+```bash
+make test
 ```
 
 ### Run Your First Example

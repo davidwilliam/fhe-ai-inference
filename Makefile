@@ -1,11 +1,10 @@
 SHELL := /bin/sh
 
-# Makefile for fhe-ai-inference: Automates OpenFHE and OpenFHE-Python setup
 .PHONY: all install clean verify test
 
 # Configuration
-OPENFHE_VERSION       = v0.9.0
-OPENFHE_PYTHON_COMMIT = 608717f
+OPENFHE_VERSION       = v1.2.3
+OPENFHE_PYTHON_TAG    = v0.8.10
 OPENFHE_DIR           = $(HOME)/workspace_cpp/openfhe-development
 OPENFHE_PYTHON_DIR    = $(HOME)/workspace_cpp/openfhe-python
 INSTALL_PREFIX        = /usr/local
@@ -29,89 +28,66 @@ CMAKE_FLAGS = \
 
 ZSHRC = $(HOME)/.zshrc
 
-# Default target
 all: install
 
-# Composite install
 install: install-dependencies clone-repos build-openfhe build-openfhe-python setup-env verify
 
-# Install Homebrew dependencies
 install-dependencies:
 	@echo "Installing Homebrew dependencies..."
 	@brew install libomp gmp mpfr cmake || true
 
-# Clone or update repositories
 clone-repos:
-	@echo "Cloning OpenFHE $(OPENFHE_VERSION)..."
+	@echo "Cloning OpenFHE C++ core ($(OPENFHE_VERSION))..."
 	@if [ ! -d "$(OPENFHE_DIR)" ]; then \
-	  git clone https://github.com/openfheorg/openfhe-development.git $(OPENFHE_DIR); \
-	  cd $(OPENFHE_DIR) && git checkout $(OPENFHE_VERSION); \
+		git clone https://github.com/openfheorg/openfhe-development.git $(OPENFHE_DIR); \
+		cd $(OPENFHE_DIR) && git checkout $(OPENFHE_VERSION); \
 	else \
-	  cd $(OPENFHE_DIR) && git fetch && git checkout $(OPENFHE_VERSION); \
+		cd $(OPENFHE_DIR) && git fetch && git checkout $(OPENFHE_VERSION); \
 	fi
-	@echo "Cloning OpenFHE-Python $(OPENFHE_PYTHON_COMMIT)..."
+	@echo "Cloning OpenFHE-Python wrapper ($(OPENFHE_PYTHON_TAG))..."
 	@if [ ! -d "$(OPENFHE_PYTHON_DIR)" ]; then \
-	  git clone https://github.com/openfheorg/openfhe-python.git $(OPENFHE_PYTHON_DIR); \
-	  cd $(OPENFHE_PYTHON_DIR) && git checkout $(OPENFHE_PYTHON_COMMIT); \
+		git clone https://github.com/openfheorg/openfhe-python.git $(OPENFHE_PYTHON_DIR); \
+		cd $(OPENFHE_PYTHON_DIR) && git checkout $(OPENFHE_PYTHON_TAG); \
 	else \
-	  cd $(OPENFHE_PYTHON_DIR) && git fetch && git checkout $(OPENFHE_PYTHON_COMMIT); \
+		cd $(OPENFHE_PYTHON_DIR) && git fetch && git checkout $(OPENFHE_PYTHON_TAG); \
 	fi
 
-# Build and install OpenFHE C++ library
 build-openfhe:
-	@echo "Building OpenFHE..."
+	@echo "Building and installing OpenFHE C++ core ($(OPENFHE_VERSION))..."
 	@mkdir -p $(OPENFHE_DIR)/build
 	@cd $(OPENFHE_DIR)/build && \
-	  rm -rf * && \
-	  cmake $(CMAKE_FLAGS) --log-level=DEBUG .. && \
-	  make -j4 && \
-	  sudo make install
+		rm -rf * && \
+		cmake $(CMAKE_FLAGS) --log-level=DEBUG .. && \
+		make -j$(shell sysctl -n hw.ncpu) && \
+		sudo make install
 
-# Build and install Python bindings
 build-openfhe-python:
-	@echo "Installing OpenFHE-Python..."
-	@cd $(OPENFHE_PYTHON_DIR) && pip install .
+	@echo "Installing OpenFHE Python bindings from source ($(OPENFHE_PYTHON_TAG))..."
+	@cd $(OPENFHE_PYTHON_DIR) && pip install . --no-cache-dir
 
-# Set up environment variables (idempotent)
 setup-env:
 	@echo "Configuring $(ZSHRC) for fhe-ai-inference…"
 	@grep -F "# >>> fhe-ai-inference configuration >>>" "$(ZSHRC)" >/dev/null 2>&1 || { \
-	  echo "# >>> fhe-ai-inference configuration >>>" >> "$(ZSHRC)"; \
-	  echo "export DYLD_LIBRARY_PATH=\"$(INSTALL_PREFIX)/lib:\$$DYLD_LIBRARY_PATH\"" >> "$(ZSHRC)"; \
-	  echo "# <<< fhe-ai-inference configuration <<<" >> "$(ZSHRC)"; \
-	  echo "✔ fhe-ai-inference block added to $(ZSHRC)" >&2; \
+		echo "# >>> fhe-ai-inference configuration >>>" >> "$(ZSHRC)"; \
+		echo "export DYLD_LIBRARY_PATH=\"$(INSTALL_PREFIX)/lib:\$$DYLD_LIBRARY_PATH\"" >> "$(ZSHRC)"; \
+		echo "# <<< fhe-ai-inference configuration <<<" >> "$(ZSHRC)"; \
+		echo "✔ fhe-ai-inference block added to $(ZSHRC)" >&2; \
 	}
-	@echo
-	@echo "→ To pick up these changes, run:"
-	@echo "    source $(ZSHRC)   (or restart your terminal)"
+	@printf "\n→ To pick up these changes, run:\n    source $(ZSHRC)   (or restart your terminal)\n\n"
 
-# Verify installation
 verify:
-	@echo "Verifying OpenFHE libraries in $(INSTALL_PREFIX)/lib…"
-	@ls $(INSTALL_PREFIX)/lib | grep -i openfhe >/dev/null || (echo "Error: OpenFHE libraries not found" && exit 1)
-	@echo "Locating openfhe.so in hatch env…"
-	@FILE=$$(find "$(HOME)/Library/Application Support/hatch/env/virtual/$(HATCH_ENV)" -type f -name openfhe.so | head -n 1); \
-	[ -n "$$FILE" ] || (echo "Error: openfhe.so not found" && exit 1); \
-	@echo "Found $$FILE"; \
-	otool -L "$$FILE" | grep -E 'libOPENFHE|libomp' || (echo "Error: openfhe.so dependencies not resolved" && exit 1)
-	@echo "Running minimal OpenFHE Python smoke test…"
-	@python -c "from openfhe import CCParamsCKKSRNS, GenCryptoContext; params=CCParamsCKKSRNS(); params.SetMultiplicativeDepth(3); params.SetScalingModSize(50); params.SetRingDim(16384); GenCryptoContext(params); print('OK')"
+	@echo "Verifying OpenFHE C++ libs in $(INSTALL_PREFIX)/lib…"
+	@ls $(INSTALL_PREFIX)/lib | grep -i openfhe >/dev/null || (echo "Error: C++ libs not found"; exit 1)
+	@echo "Running OpenFHE Python smoke test…"
+	@python -c "from openfhe import CCParamsCKKSRNS, GenCryptoContext; p=CCParamsCKKSRNS(); p.SetMultiplicativeDepth(3); p.SetScalingModSize(50); p.SetRingDim(16384); GenCryptoContext(p); print('OK')"
+	@echo "✅ OpenFHE context successfully initialized with CKKS."
 
-# Run full test suite
 test:
-	@echo "Running fhe-ai-inference tests…"
+	@echo "Running fhe-ai-inference tests via Hatch..."
 	@cd $(HOME)/workspace_python/fhe-ai-inference && \
-	  hatch run pytest tests/test_original_ckks.py -v --log-file=pytest.log && \
-	  hatch run pytest tests/test_context.py::test_ckks_context_creation -v --log-file=pytest.log && \
-	  hatch run pytest tests/test_context.py -v --log-file=pytest.log && \
-	  hatch run pytest tests/test_activations.py -v --log-file=pytest.log && \
-	  hatch run pytest tests/test_inference.py -v --log-file=pytest.log && \
-	  hatch run test && \
-	  hatch run dev
+	  hatch run pytest
 
-# Clean build artifacts
 clean:
 	@echo "Cleaning up…"
 	@rm -rf $(OPENFHE_DIR)/build
-	@rm -rf $(OPENFHE_PYTHON_DIR)/build
 	@pip uninstall -y openfhe || true
