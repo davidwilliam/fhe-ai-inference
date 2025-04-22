@@ -168,15 +168,6 @@ FHE-AI-Inference is evolving rapidly:
 
 Contributions are warmly welcomed! Check out [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Comparison with Other FHE Libraries
-
-| Library | FHE Backend | AI Inference | Pythonic API | NN Focus | OpenFHE |
-|---------|-------------|--------------|--------------|----------|---------|
-| **FHE-AI-Inference** | OpenFHE (CKKS) | ✅ Planned | ✅ High | ✅ Strong | ✅ Yes |
-| Concrete ML | Concrete (Zama) | ✅ Yes | ✅ High | ✅ Moderate | ❌ No |
-| TenSEAL | SEAL | ✅ Yes | ✅ Medium | ✅ Moderate | ❌ No |
-| Pyfhel | Multiple | ❌ Limited | ✅ High | ❌ Weak | ❌ No |
-
 ## Maintainer
 
 [David William Silva](https://github.com/davidwilliam)
