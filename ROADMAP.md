@@ -20,13 +20,29 @@ Our approach emphasizes **modularity**, **developer experience**, and **practica
 
 ## Phase 1: Encrypted Neural Ops (Linear Models)
 
-> 🔍 Focus: Enable core encrypted model operations like linear layers and forward passes.
+> 🔍 **Focus**: Enable core encrypted model operations like linear layers and forward passes.
 
-- [ ] Implement `FHELinear` module (analog to `torch.nn.Linear`)
-- [ ] Support encrypted matrix-vector multiplication
-- [ ] Encode and apply biases under encryption
-- [ ] Create `FHEModelRunner` for running encrypted forward passes
-- [ ] Provide an example: encrypted 2-layer network with toy weights
+- [x] **Implement `FHELinear` module** (analog to `torch.nn.Linear`)
+  Scalar-based encrypted linear transformation with optional bias.
+
+- [x] **Support encrypted matrix-vector multiplication**
+  Uses homomorphic `EvalMult` + `EvalAdd` to compute dot products over encrypted inputs.
+
+- [x] **Encode and apply biases under encryption**
+  Bias terms are packed and encrypted to match ciphertext scale and level, enabling secure addition.
+
+- [x] **Add bootstrapping support**
+  Bootstrapping is integrated via a mixin and triggered adaptively when noise budget is exhausted.
+
+- [x] **Fix precision issues and pass forward tests**
+  Encrypted linear forward passes now produce results within ±0.01 of expected plaintext values.
+
+### In Progress / Next
+
+- [ ] **Create `FHEModelRunner` for encrypted forward passes**
+  Orchestrates sequential encrypted layer execution, similar to `torch.nn.Sequential`.
+- [ ] **Provide an example: encrypted 2-layer network with toy weights**
+  Demonstrates model execution flow, useful for educational and validation purposes.
 
 ## Phase 2: Serialization & Secure Model Sharing
 

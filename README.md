@@ -118,21 +118,27 @@ All features work out of the box via `make install`.
 
 ### Bootstrapping Support
 
-Bootstrapping resets a ciphertext's noise budget, allowing deeper encrypted computations. With `fhe-ai-inference`, bootstrapping is supported through a clean `BootstrapMixin`:
+Bootstrapping resets a ciphertext's noise budget, enabling deeper encrypted computations without loss of precision. `fhe-ai-inference` offers built-in bootstrapping support via a clean, extensible interface.
 
 ```python
-fhe = BootstrappableFHE()
-fhe.setup_bootstrap(level_budget=[4, 4], num_slots=8)
-cipher = fhe.encrypt([...])
-cipher = fhe.bootstrap(cipher)
+fhe = FHEAI(bootstrappable=True, level_budget=[6, 6], scale_mod_size=59)
+cipher = fhe.encrypt([...], level=initial_level)
+for _ in range(depth):
+    cipher = fhe.multiply_and_rescale(cipher, cipher)
+
+if fhe.requires_bootstrap(cipher):
+    cipher = fhe.bootstrap(cipher)
+
 result = fhe.decrypt(cipher)
 ```
 
-See [scripts/bootstrap_demo.py](scripts/bootstrap_demo.py)  for a working example.
+> **Adaptive Logic**: Bootstrapping is applied only when needed (i.e., if the ciphertext’s level exceeds the bootstrapping threshold). This ensures optimal performance during deep computations.
 
-> ⚠️ Known Issue: Bootstrapping segfaults under test runners on macOS due to OpenFHE Python bindings. Tests are skipped by default.
+See [`scripts/bootstrap_demo.py`](scripts/bootstrap_demo.py) for a working example that computes `x^16` homomorphically.
 
-Generate and view documentation easily:
+> ⚠️ **Known Issue**: Due to limitations in the OpenFHE Python bindings on macOS, bootstrapping may cause segmentation faults under some test runners. Related tests are skipped by default on this platform.
+
+### Generate and view documentation
 
 ```bash
 python3 -m http.server --directory docs

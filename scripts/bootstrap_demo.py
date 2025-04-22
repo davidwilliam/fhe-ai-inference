@@ -1,72 +1,45 @@
-# scripts/bootstrap_demo.py
+import numpy as np
 
-from openfhe import (
-    FHECKKSRNS,
-    CCParamsCKKSRNS,
-    CryptoContext,
-    GenCryptoContext,
-    PKESchemeFeature,
-    ScalingTechnique,
-    SecretKeyDist,
-    SecurityLevel,
-)
+from fhe_ai_inference.fheai import FHEAI
 
 
 def main():
-    print("🔐 Building bootstrappable CKKS context...")
-    params = CCParamsCKKSRNS()
-    params.SetSecretKeyDist(SecretKeyDist.UNIFORM_TERNARY)
-    params.SetSecurityLevel(SecurityLevel.HEStd_NotSet)
-    params.SetRingDim(1 << 12)
-
-    rescale_tech = ScalingTechnique.FLEXIBLEAUTO
-    dcrt_bits = 59
-    first_mod = 60
-
-    params.SetScalingModSize(dcrt_bits)
-    params.SetScalingTechnique(rescale_tech)
-    params.SetFirstModSize(first_mod)
-
-    level_budget = [4, 4]
-    levels_after_bootstrap = 10
-    depth = levels_after_bootstrap + FHECKKSRNS.GetBootstrapDepth(
-        level_budget,
-        SecretKeyDist.UNIFORM_TERNARY,
+    # Initialize bootstrappable context with safe margins
+    fhe = FHEAI(
+        bootstrappable=True,
+        level_budget=[6, 6],
+        scale_mod_size=59,
+        num_slots=128,
+        ring_dim=1 << 15,
     )
-    params.SetMultiplicativeDepth(depth)
 
-    context: CryptoContext = GenCryptoContext(params)
-    context.Enable(PKESchemeFeature.PKE)
-    context.Enable(PKESchemeFeature.KEYSWITCH)
-    context.Enable(PKESchemeFeature.LEVELEDSHE)
-    context.Enable(PKESchemeFeature.ADVANCEDSHE)
-    context.Enable(PKESchemeFeature.FHE)
-
-    print("✅ Context created.")
-
-    num_slots = 8
-    print(f"📐 Bootstrapping with {num_slots} slots and level_budget {level_budget}...")
-    context.EvalBootstrapSetup(level_budget, [0, 0], num_slots)
-
-    print("🔑 Generating keys...")
-    keypair = context.KeyGen()
-    context.EvalMultKeyGen(keypair.secretKey)
-    context.EvalBootstrapKeyGen(keypair.secretKey, num_slots)
-
+    # Encryption level before multiplications
     values = [0.25, 0.5, 0.75, 1.0, 2.0, 3.0, 4.0, 5.0]
-    ptxt = context.MakeCKKSPackedPlaintext(values, 1, depth - 1, None, num_slots)
-    ptxt.SetLength(len(values))
+    depth = sum(fhe.level_budget) + 7
+    initial_level = depth - 4
 
-    print(f"🔒 Encrypting: {values}")
-    ciph = context.Encrypt(keypair.publicKey, ptxt)
+    print(f"🔒 Encrypting at level {initial_level}: {values}")
+    ciph = fhe.encrypt(values, level=initial_level)
+
+    print(f"➡️  Ciphertext level before multiplications: {ciph.GetLevel()}")
+    for i in range(4):
+        ciph = fhe.multiply_and_rescale(ciph, ciph)
+        print(f"🔁 After multiplication {i+1}: level = {ciph.GetLevel()}")
 
     print(f"➡️  Ciphertext level before bootstrap: {ciph.GetLevel()}")
-    ciph_refreshed = context.EvalBootstrap(ciph)
-    print(f"✅ Ciphertext level after bootstrap: {ciph_refreshed.GetLevel()}")
 
-    result = context.Decrypt(ciph_refreshed, keypair.secretKey)
-    result.SetLength(len(values))
-    print(f"🔓 Decrypted result after bootstrap: {result.GetCKKSPackedValue()}")
+    # This will now *automatically bootstrap* inside decrypt if needed
+    ciph = fhe.mod_reduce(ciph)  # Pre-align for safety
+    if fhe._bootstrappable:
+        ciph = fhe.bootstrap(ciph)
+        print(f"✅ Ciphertext level after bootstrap: {ciph.GetLevel()}")
+
+    result = fhe.decrypt(ciph, length=len(values))
+    print(f"🔓 Decrypted result after bootstrap: {result}")
+
+    expected = np.power(values, 16)
+    close_mask = np.isclose(result, expected, rtol=1e-2, atol=1e-3)
+    print(f"✅ Acceptable tolerance? {np.all(close_mask)}")
 
 
 if __name__ == "__main__":

@@ -37,6 +37,8 @@ class FHELinear:
         inputs: list[Ciphertext] | list[list[Ciphertext]],
         crypto_context,
         public_key,
+        bootstrap_fn=None,
+        bootstrap_threshold: int = 10,
     ) -> list[Ciphertext] | list[list[Ciphertext]]:
         """
         If inputs is a single vector → compute W*x + b
@@ -47,7 +49,12 @@ class FHELinear:
         )
 
         if is_batch:
-            return [self.forward(vec, crypto_context, public_key) for vec in inputs]
+            return [
+                self.forward(
+                    vec, crypto_context, public_key, bootstrap_fn, bootstrap_threshold
+                )
+                for vec in inputs
+            ]
 
         if len(inputs) != self.in_features:
             raise ValueError(f"Expected {self.in_features} inputs, got {len(inputs)}")
@@ -61,15 +68,31 @@ class FHELinear:
             summed = reduce(lambda x, y: crypto_context.EvalAdd(x, y), weighted)
 
             if self.bias is not None:
-                bias_plain = crypto_context.MakeCKKSPackedPlaintext([self.bias[i]])
-                bias_enc = crypto_context.Encrypt(public_key, bias_plain)
-                summed = crypto_context.EvalAdd(summed, bias_enc)
+                bias_plain = crypto_context.MakeCKKSPackedPlaintext(
+                    [self.bias[i]], 1, summed.GetLevel()
+                )
+                bias_ct = crypto_context.Encrypt(public_key, bias_plain)
+                summed = crypto_context.EvalAdd(summed, bias_ct)
+
+            if bootstrap_fn and summed.GetLevel() >= bootstrap_threshold:
+                summed = bootstrap_fn(summed)
 
             outputs.append(summed)
 
         return outputs
 
     def __call__(
-        self, inputs: list[Ciphertext], crypto_context, public_key
+        self,
+        inputs: list[Ciphertext],
+        crypto_context,
+        public_key,
+        bootstrap_fn=None,
+        bootstrap_threshold=10,
     ) -> list[Ciphertext]:
-        return self.forward(inputs, crypto_context, public_key)
+        return self.forward(
+            inputs,
+            crypto_context,
+            public_key,
+            bootstrap_fn,
+            bootstrap_threshold,
+        )
