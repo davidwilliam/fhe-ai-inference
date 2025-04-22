@@ -115,30 +115,12 @@ refreshed = fhe.bootstrap(enc)
 print(fhe.decrypt(refreshed))  # [3.14...] — ciphertext refreshed
 ```
 
-> ⚠️ **Note**: On macOS, OpenFHE bootstrapping may crash under test runners due to native bindings. Use standalone scripts for demo/testing.
-
 All features work out of the box via `make install`.
 
 ## Tutorials & Documentation
 
 - [Tutorials Index](tutorials/index.md): Practical guides covering key aspects of OpenFHE usage.
 - [Getting Started with OpenFHE (CKKS)](tutorials/getting_started_with_openfhe.md): Detailed introduction covering encryption, decryption, and homomorphic operations.
-
-### Bootstrapping Support
-
-Bootstrapping resets a ciphertext's noise budget, enabling deeper encrypted computations without loss of precision. `fhe-ai-inference` offers built-in bootstrapping support via a clean, extensible interface.
-
-```python
-fhe = FHEAI(bootstrappable=True, level_budget=[6, 6], scale_mod_size=59)
-cipher = fhe.encrypt([...], level=initial_level)
-for _ in range(depth):
-    cipher = fhe.multiply_and_rescale(cipher, cipher)
-
-if fhe.requires_bootstrap(cipher):
-    cipher = fhe.bootstrap(cipher)
-
-result = fhe.decrypt(cipher)
-```
 
 > **Adaptive Logic**: Bootstrapping is applied only when needed (i.e., if the ciphertext’s level exceeds the bootstrapping threshold). This ensures optimal performance during deep computations.
 
