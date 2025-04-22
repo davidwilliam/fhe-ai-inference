@@ -12,9 +12,6 @@ class FHEModelRunner:
     def __init__(
         self, fhe: FHEAI, layers: list[FHELinear], bootstrap_threshold: int = 10
     ):
-        self.fhe = fhe
-        self.layers = layers
-        self.bootstrap_threshold = bootstrap_threshold
         """
         Runs a sequence of FHE-compatible layers over encrypted input.
 
@@ -22,8 +19,9 @@ class FHEModelRunner:
             layers (list): List of layers (e.g., FHELinear instances)
             fhe (FHEAI): FHE context and key manager
         """
-        self.layers = layers
         self.fhe = fhe
+        self.layers = layers
+        self.bootstrap_threshold = bootstrap_threshold
 
     def run(self, x: list[float]) -> list[float]:
         encrypted = [self.fhe.encrypt(val, level=0) for val in x]

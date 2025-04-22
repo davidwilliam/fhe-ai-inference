@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from openfhe import Ciphertext
 
 from fhe_ai_inference.fheai import FHEAI
 from fhe_ai_inference.layers.linear import FHELinear
@@ -58,3 +59,35 @@ def test_fhe_linear_batch_forward(fhe):
         assert (
             diff < 1e-2
         ), f"Batch {i}: Expected {expected}, got {decrypted} (diff={diff})"
+
+
+def test_forward_without_bootstrap(fhe):
+    weights = np.array([[1.0]])
+    linear = FHELinear(weights, bias=None)
+    inp = [fhe.encrypt(2.0, level=0)]
+
+    # Pass no bootstrap_fn
+    out = linear.forward(inp, fhe.crypto_context, fhe.key_pair.publicKey)
+    assert isinstance(out[0], Ciphertext)
+
+
+def test_linear_transposes_weights():
+    weights = np.array([[1.0, 2.0], [3.0, 4.0]])  # shape (2, 2)
+    linear = FHELinear(weights, transpose_weights=True)
+    assert linear.weights.shape == (2, 2)  # Post-transpose: shape (2, 2)
+
+
+def test_linear_transpose_executes():
+    weights = np.array([[1.0, 2.0, 3.0]])  # shape (1, 3)
+    layer = FHELinear(weights, transpose_weights=True)
+    assert layer.weights.shape == (3, 1)
+
+
+def test_linear_input_length_mismatch(fhe):
+    weights = np.array([[1.0, 2.0]])
+    linear = FHELinear(weights)
+
+    invalid_input = [fhe.encrypt(1.0, level=0)]  # only 1 element instead of 2
+
+    with pytest.raises(ValueError, match="Expected 2 inputs, got 1"):
+        linear.forward(invalid_input, fhe.crypto_context, fhe.key_pair.publicKey)

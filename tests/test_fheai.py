@@ -75,3 +75,50 @@ def test_homomorphic_multiplication(fheai):
     assert np.allclose(
         decrypted_result, original1 * original2, atol=1e-3
     ), "Homomorphic multiplication failed"
+
+
+def test_encrypt_with_and_without_level(fheai):
+    data = [1.0, 2.0]
+
+    # Encrypt with default level (None)
+    ct1 = fheai.encrypt(data)
+
+    # Encrypt with explicit level
+    ct2 = fheai.encrypt(data, level=0)
+
+    # Should both decrypt to the same values
+    decrypted1 = fheai.decrypt(ct1, length=len(data))
+    decrypted2 = fheai.decrypt(ct2, length=len(data))
+
+    assert np.allclose(
+        decrypted1, decrypted2, atol=1e-5
+    ), "Level-based encrypt mismatch"
+
+
+def test_bootstrap_raises_when_disabled():
+    fhe = FHEAI(bootstrappable=False)
+    ct = fhe.encrypt(3.14)
+
+    with pytest.raises(RuntimeError, match="Bootstrapping is not enabled"):
+        fhe.bootstrap(ct)
+
+
+def test_mod_reduce_runs(fheai):
+    data = [1.23, 4.56]
+    ct = fheai.encrypt(data)
+    reduced = fheai.mod_reduce(ct)
+    result = fheai.decrypt(reduced, length=len(data))
+    assert isinstance(result, np.ndarray)
+
+
+def test_fhe_context_enables_fhe():
+    _ = FHEAI()
+    # This test doesn't assert anything — it just ensures the constructor runs
+    # and hits `.Enable(PKESchemeFeature.FHE)`
+
+
+def test_fheai_default_enables_fhe():
+    # Create with crypto_context=None and bootstrappable=False
+    fhe = FHEAI(mult_depth=1, scale_mod_size=50, bootstrappable=False)
+    # The line enabling FHE should now definitely be executed
+    assert fhe.crypto_context is not None  # Sanity check
