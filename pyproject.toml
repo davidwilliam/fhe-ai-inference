@@ -58,6 +58,7 @@ dev = [
     "pytest --cov=fhe_ai_inference --cov-report=term --cov-report=html",
     "pdoc fhe_ai_inference --output-dir docs",
 ]
+cov = "pytest --cov=fhe_ai_inference --cov-report=xml --cov-report=term-missing"
 
 [tool.ruff]
 line-length = 88

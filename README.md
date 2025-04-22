@@ -1,5 +1,7 @@
 # FHE-AI-Inference
 
+![Python Version](https://img.shields.io/badge/python-3.13-blue.svg) ![License](https://img.shields.io/github/license/davidwilliam/fhe-ai-inference) ![Tests](https://github.com/davidwilliam/fhe-ai-inference/actions/workflows/tests.yml/badge.svg) [![codecov](https://codecov.io/gh/davidwilliam/fhe-ai-inference/branch/main/graph/badge.svg)](https://codecov.io/gh/davidwilliam/fhe-ai-inference) ![Code Style: Ruff](https://img.shields.io/badge/style-ruff-orange) ![FHE](https://img.shields.io/badge/FHE-OpenFHE-blueviolet) ![Hatch](https://img.shields.io/badge/built_with-hatch-ff69b4)
+
 **FHE-AI-Inference** is a Python library enabling **secure neural network inference** with **Fully Homomorphic Encryption (FHE)** using the [OpenFHE](https://github.com/openfheorg/openfhe-python) CKKS scheme. It allows privacy-preserving AI applications for sensitive data scenarios, such as encrypted medical diagnostics (healthcare) and encrypted fraud detection (finance).
 
 ## Why FHE-AI-Inference?
