@@ -30,7 +30,7 @@ jobs:
             build-essential \
             python3-dev \
             python3-pybind11 \
-            pybind11-dev
+            libpybind11-dev
 
       - name: Build & install OpenFHE & Python bindings
         run: make install
@@ -42,7 +42,6 @@ jobs:
         run: |
           python3 - << 'EOF'
           import openfhe
-          # simple sanity check: can we actually see the module?
           print("openfhe version:", getattr(openfhe, "__version__", "n/a"))
           print("OK")
           EOF
