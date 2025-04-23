@@ -21,7 +21,14 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgmp-dev libmpfr-dev libomp-dev cmake build-essential
+          sudo apt-get install -y \
+            libgmp-dev \
+            libmpfr-dev \
+            libomp-dev \
+            cmake \
+            build-essential \
+            python3-dev \
+            pybind11-dev
 
       - name: Build & install OpenFHE & Python bindings
         run: make install
@@ -32,4 +39,4 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          token: "${{ secrets.CODECOV_TOKEN }}"
+          token: ${{ secrets.CODECOV_TOKEN }}
