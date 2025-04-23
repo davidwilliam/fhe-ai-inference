@@ -63,7 +63,7 @@ build-openfhe:
 
 build-openfhe-python:
 	@echo "Installing OpenFHE Python bindings from source ($(OPENFHE_PYTHON_TAG))..."
-	@cd $(OPENFHE_PYTHON_DIR) && pip install . --no-cache-dir
+	@cd $(OPENFHE_PYTHON_DIR) && pip install --no-build-isolation . --no-cache-dir
 
 setup-env:
 	@echo "Configuring $(ZSHRC) for fhe-ai-inference…"
